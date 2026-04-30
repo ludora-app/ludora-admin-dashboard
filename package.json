@@ -8,10 +8,14 @@
     "start": "next start",
     "lint": "biome lint .",
     "format": "biome format . --write",
-    "check": "biome check --write ."
+    "check": "biome check --write .",
+    "inject:env": "bash tools/vault/inject-env.sh",
+    "generate:api": "rm -rf src/api/generated && pnpm inject:env node tools/generate-api/download-swagger.mjs && pnpm inject:env node tools/generate-api/orval.mjs && pnpm inject:env pnpm orval && node tools/generate-api/remove-controller.mjs && node tools/generate-api/fix-rq-v5.mjs && node tools/generate-api/generate-invalidate-queries.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
+    "@tanstack/react-query": "^5.100.6",
+    "@tanstack/react-query-devtools": "^5.100.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.14.0",
@@ -30,6 +34,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
+    "ky": "^2.0.2",
     "orval": "^8.9.0",
     "tailwindcss": "^4",
     "typescript": "^5"
