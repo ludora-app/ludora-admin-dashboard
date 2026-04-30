@@ -4,6 +4,9 @@
 
 Ce document décrit le contexte et les spécifications du **dashboard d'administration** de **Ludora**, une plateforme de matchmaking sportif. Ce back-office est destiné exclusivement aux administrateurs internes.
 
+> [!NOTE]
+> Pour une vision détaillée de l'organisation des dossiers et des principes techniques du projet, se référer au document [ARCHITECTURE.md](file:///Users/ganaf4ll/Documents/code/MDS/LUDORA/ludora-admin-dashboard/ARCHITECTURE.md).
+
 ---
 
 ## 🏗️ Stack Technique
