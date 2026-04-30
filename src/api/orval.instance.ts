@@ -1,32 +1,14 @@
-import ky from "ky";
+import { kyApi } from "./api.instance";
 
 /**
  * Custom instance for Orval
- * This instance uses ky to make requests.
+ * This instance uses the centralized kyApi instance.
  */
 export const customInstance = async <T>(
-  config: {
-    url: string;
-    method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-    params?: any;
-    data?: any;
-    headers?: any;
-  },
+  url: string,
   options?: any,
 ): Promise<T> => {
-  const { url, method, params, data, headers } = config;
-
-  const response = await ky(url, {
-    method,
-    searchParams: params,
-    json: data,
-    headers: {
-      ...headers,
-      ...options?.headers,
-    },
-    ...options,
-  });
-
+  const response = await kyApi(url, options);
   return response.json<T>();
 };
 
