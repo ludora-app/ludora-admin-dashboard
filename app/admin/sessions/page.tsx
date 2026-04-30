@@ -6,5 +6,5 @@ export default function SessionsPage() {
         <p className="text-muted-foreground italic">List of active and past sports sessions.</p>
       </div>
     </div>
-  )
+  );
 }

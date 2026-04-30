@@ -6,5 +6,5 @@ export default function UsersPage() {
         <p className="text-muted-foreground italic">User list table will be implemented here.</p>
       </div>
     </div>
-  )
+  );
 }

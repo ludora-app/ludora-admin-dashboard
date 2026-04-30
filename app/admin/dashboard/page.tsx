@@ -11,5 +11,5 @@ export default function DashboardPage() {
         Detailed Activity Graph Placeholder
       </div>
     </div>
-  )
+  );
 }

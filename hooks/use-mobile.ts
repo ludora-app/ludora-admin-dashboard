@@ -1,27 +1,27 @@
-import * as React from "react"
+import * as React from "react";
 
-const MOBILE_BREAKPOINT = 768
+const MOBILE_BREAKPOINT = 768;
 
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean>(false)
+  const [isMobile, setIsMobile] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-    
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+
     // Set initial value
     if (mql.matches !== isMobile) {
       requestAnimationFrame(() => {
-        setIsMobile(mql.matches)
-      })
+        setIsMobile(mql.matches);
+      });
     }
 
     const onChange = () => {
-      setIsMobile(mql.matches)
-    }
+      setIsMobile(mql.matches);
+    };
 
-    mql.addEventListener("change", onChange)
-    return () => mql.removeEventListener("change", onChange)
-  }, [isMobile])
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, [isMobile]);
 
-  return isMobile
+  return isMobile;
 }

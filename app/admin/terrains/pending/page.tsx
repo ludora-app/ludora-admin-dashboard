@@ -6,5 +6,5 @@ export default function PendingTerrainsPage() {
         <p>Queue of terrains awaiting admin approval.</p>
       </div>
     </div>
-  )
+  );
 }

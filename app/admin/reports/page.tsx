@@ -6,5 +6,5 @@ export default function ReportsPage() {
         <p>Moderation queue and user signalements.</p>
       </div>
     </div>
-  )
+  );
 }

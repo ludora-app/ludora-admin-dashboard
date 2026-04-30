@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import * as React from "react"
 import {
-  LayoutDashboard,
-  Users,
-  MapPin,
-  Calendar,
   AlertTriangle,
+  Calendar,
   ClipboardList,
-} from "lucide-react"
-import { usePathname } from "next/navigation"
+  LayoutDashboard,
+  MapPin,
+  Users,
+} from "lucide-react";
+import { usePathname } from "next/navigation";
+import type * as React from "react";
 
 import {
   Sidebar,
@@ -22,7 +22,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 const data = {
   navMain: [
@@ -62,27 +62,30 @@ const data = {
       icon: AlertTriangle,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" render={
-              <a href="/admin/dashboard">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <ClipboardList className="size-4" />
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">Ludora Admin</span>
-                  <span className="">v1.0.0</span>
-                </div>
-              </a>
-            } />
+            <SidebarMenuButton
+              size="lg"
+              render={
+                <a href="/admin/dashboard">
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                    <ClipboardList className="size-4" />
+                  </div>
+                  <div className="flex flex-col gap-0.5 leading-none">
+                    <span className="font-semibold">Ludora Admin</span>
+                    <span className="">v1.0.0</span>
+                  </div>
+                </a>
+              }
+            />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -92,8 +95,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupContent>
             <SidebarMenu>
               {data.navMain.map((item) => {
-                const isActive = pathname === item.url || pathname.startsWith(item.url + "/")
-                
+                const isActive = pathname === item.url || pathname.startsWith(`${item.url}/`);
+
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
@@ -107,7 +110,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       }
                     />
                   </SidebarMenuItem>
-                )
+                );
               })}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -115,5 +118,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
