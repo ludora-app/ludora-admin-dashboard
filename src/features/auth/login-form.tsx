@@ -45,24 +45,24 @@ export function LoginForm() {
   const { mutate: login, isPending } = useAuthB2BLoginAdmin({
     mutation: {
       onSuccess: (response) => {
-        if (response.status === 200) {
-          const { accessToken, refreshToken } = response.data.data;
+        // The custom Orval instance returns response.json(), so response is the body.
+        // The body structure is { data: { accessToken, refreshToken } }
+        const { accessToken, refreshToken } = response.data;
 
-          // Save tokens in React Query cache
-          queryClient.setQueryData(["auth-tokens"], {
-            accessToken,
-            refreshToken,
-          });
+        // Save tokens in React Query cache
+        queryClient.setQueryData(["auth-tokens"], {
+          accessToken,
+          refreshToken,
+        });
 
-          // Existing Zustand auth storage (handles cookies & state)
-          setAuth(accessToken, refreshToken, {
-            id: "1",
-            email: "admin@ludora.com",
-            role: "admin",
-          });
+        // Existing Zustand auth storage (handles cookies & state)
+        setAuth(accessToken, refreshToken, {
+          id: "1",
+          email: "admin@ludora.com",
+          role: "admin",
+        });
 
-          router.push("/admin/dashboard");
-        }
+        router.push("/admin/dashboard");
       },
       onError: (err: unknown) => {
         setError((err as any)?.response?.data?.message || "Invalid email or password");
