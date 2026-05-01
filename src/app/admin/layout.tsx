@@ -14,25 +14,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
+      <SidebarInset className="bg-surface-page min-h-screen">
+        <header className="flex h-20 shrink-0 items-center gap-2 px-8 sticky top-0 bg-surface-page/80 backdrop-blur-md z-10">
+          <div className="flex items-center gap-4">
+            <SidebarTrigger className="-ml-1 size-10 rounded-xl hover:bg-violet-principal/10 hover:text-violet-principal transition-colors" />
+            <Separator orientation="vertical" className="mr-2 h-6 bg-secondary" />
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">Admin</BreadcrumbLink>
+                  <BreadcrumbLink href="/admin/dashboard" className="text-text-muted hover:text-violet-principal font-semibold transition-colors">Admin</BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbSeparator className="hidden md:block text-text-muted" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                  <BreadcrumbPage className="text-text-primary font-bold">Dashboard</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
+        <main className="flex-1 px-8 pb-12 overflow-y-auto">
+          {children}
+        </main>
       </SidebarInset>
     </SidebarProvider>
   );
