@@ -10,7 +10,7 @@
     "format": "biome format . --write",
     "check": "biome check --write .",
     "inject:env": "bash tools/vault/inject-env.sh",
-    "generate:api": "rm -rf src/api/generated && pnpm inject:env node tools/generate-api/download-swagger.mjs && pnpm inject:env node tools/generate-api/orval.mjs && pnpm inject:env pnpm orval && node tools/generate-api/remove-controller.mjs && node tools/generate-api/fix-rq-v5.mjs && node tools/generate-api/generate-invalidate-queries.mjs"
+    "generate:api": "rm -rf src/api/generated && pnpm inject:env node tools/generate-api/download-swagger.mjs && pnpm inject:env node tools/generate-api/orval.mjs && pnpm inject:env pnpm orval && node tools/generate-api/remove-controller.mjs && node tools/generate-api/fix-rq-v5.mjs && node tools/generate-api/fix-query-arrays.mjs && node tools/generate-api/generate-invalidate-queries.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
