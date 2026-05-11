@@ -7,7 +7,8 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-transparent bg-primary text-primary-foreground shadow hover:opacity-80",
+        default:
+          "border-transparent bg-primary text-primary-foreground shadow hover:opacity-80",
         secondary:
           "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive:
@@ -17,12 +18,20 @@ const badgeVariants = cva(
         warning: "border-transparent bg-[#FEF4E4] text-[#7A5010] hover:bg-[#FEF4E4]/80",
         error: "border-transparent bg-[#FDECEC] text-[#7A2020] hover:bg-[#FDECEC]/80",
         info: "border-transparent bg-[#EEF0FD] text-[#2D3A8C] hover:bg-[#EEF0FD]/80",
+        // Sport variants
+        BASKETBALL: "border-transparent bg-[#FFF7ED] text-[#EA580C] hover:bg-[#FFF7ED]/80",
+        FOOTBALL: "border-transparent bg-[#F0FDF4] text-[#16A34A] hover:bg-[#F0FDF4]/80",
+        TENNIS: "border-transparent bg-[#FEFCE8] text-[#CA8A04] hover:bg-[#FEFCE8]/80",
+        VOLLEYBALL: "border-transparent bg-[#F5F3FF] text-[#7C3AED] hover:bg-[#F5F3FF]/80",
+        PADEL: "border-transparent bg-[#ECFEFF] text-[#0891B2] hover:bg-[#ECFEFF]/80",
+        BADMINTON: "border-transparent bg-[#FFF1F2] text-[#E11D48] hover:bg-[#FFF1F2]/80",
+        "PING-PONG": "border-transparent bg-[#F8FAFC] text-[#475569] hover:bg-[#F8FAFC]/80",
       },
     },
     defaultVariants: {
       variant: "default",
     },
-  },
+  }
 );
 
 export interface BadgeProps
@@ -30,7 +39,9 @@ export interface BadgeProps
     VariantProps<typeof badgeVariants> {}
 
 function Badge({ className, variant, ...props }: BadgeProps) {
-  return <div className={cn(badgeVariants({ variant }), className)} {...props} />;
+  return (
+    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+  );
 }
 
 export { Badge, badgeVariants };

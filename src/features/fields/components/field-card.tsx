@@ -43,7 +43,7 @@ export function FieldCard({ field }: FieldCardProps) {
           </div>
           <div className="flex flex-wrap gap-1.5 pt-1">
             {field.sports.map((sport) => (
-              <Badge key={sport} variant="secondary" className="text-[10px] px-1.5 py-0">
+              <Badge key={sport} variant={sport as any} className="text-[10px] px-1.5 py-0">
                 {sport.toLowerCase()}
               </Badge>
             ))}

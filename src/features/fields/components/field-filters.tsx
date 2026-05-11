@@ -116,11 +116,12 @@ export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
             return (
               <Badge
                 key={s}
-                variant={isSelected ? "default" : "secondary"}
+                variant={isSelected ? (s as any) : "secondary"}
                 className={cn(
                   "cursor-pointer transition-all hover:scale-105 py-1 px-3 select-none",
                   !isSelected &&
                     "bg-background border-border text-text-secondary hover:bg-secondary/50",
+                  isSelected && "shadow-md"
                 )}
                 onClick={() => toggleSport(s)}
               >
