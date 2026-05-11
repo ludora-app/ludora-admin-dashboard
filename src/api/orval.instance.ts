@@ -4,10 +4,7 @@ import { kyApi } from "./api.instance";
  * Custom instance for Orval
  * This instance uses the centralized kyApi instance.
  */
-export const customInstance = async <T>(
-  url: string,
-  options?: any,
-): Promise<T> => {
+export const customInstance = async <T>(url: string, options?: any): Promise<T> => {
   try {
     const response = await kyApi(url, options);
 

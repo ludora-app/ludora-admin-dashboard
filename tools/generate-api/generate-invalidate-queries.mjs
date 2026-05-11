@@ -1,40 +1,40 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Convert tag name to file path format
-const tagToFilePath = tag => {
+const tagToFilePath = (tag) => {
   return tag
     .toLowerCase()
-    .replace(/([A-Z])/g, '-$1')
-    .replace(/^-/, '')
-    .replace(/\s+/g, '-');
+    .replace(/([A-Z])/g, "-$1")
+    .replace(/^-/, "")
+    .replace(/\s+/g, "-");
 };
 
 // Extract all getQueryKey functions from API files
 const extractQueryKeyFunctions = () => {
-  const apiDir = path.join(__dirname, '..', '..', 'src', 'api', 'generated', 'api');
+  const apiDir = path.join(__dirname, "..", "..", "src", "api", "generated", "api");
   const queryKeyFunctions = [];
 
   if (!fs.existsSync(apiDir)) {
-    console.warn('API directory not found:', apiDir);
+    console.warn("API directory not found:", apiDir);
     return queryKeyFunctions;
   }
 
   // Read all subdirectories (tags)
-  const tagDirs = fs.readdirSync(apiDir).filter(file => {
+  const tagDirs = fs.readdirSync(apiDir).filter((file) => {
     const fullPath = path.join(apiDir, file);
     return fs.statSync(fullPath).isDirectory();
   });
 
-  tagDirs.forEach(tagDir => {
+  tagDirs.forEach((tagDir) => {
     const tagPath = path.join(apiDir, tagDir);
     const apiFile = path.join(tagPath, `${tagDir}.api.ts`);
 
     if (fs.existsSync(apiFile)) {
-      const content = fs.readFileSync(apiFile, 'utf-8');
+      const content = fs.readFileSync(apiFile, "utf-8");
 
       // Find all export const get*QueryKey functions with their parameters
       const queryKeyRegex = /export const (get\w+QueryKey)\s*=\s*\(([^)]*)\)/g;
@@ -48,8 +48,8 @@ const extractQueryKeyFunctions = () => {
         const params = [];
         if (paramsStr) {
           // Split by comma, handling nested types
-          const paramParts = paramsStr.split(',').map(p => p.trim());
-          paramParts.forEach(part => {
+          const paramParts = paramsStr.split(",").map((p) => p.trim());
+          paramParts.forEach((part) => {
             // Extract parameter name and type
             // Format: "name: Type" or "name?: Type"
             const paramMatch = part.match(/^(\w+)(\?)?:\s*(.+?)(?:\s*=|$)/);
@@ -94,10 +94,10 @@ import type {
 
   // Collect all unique types used in parameters
   const allTypes = new Set();
-  queryKeyFunctions.forEach(fn => {
-    fn.params.forEach(param => {
+  queryKeyFunctions.forEach((fn) => {
+    fn.params.forEach((param) => {
       // Only add types that are not primitives
-      if (!['string', 'number', 'boolean', 'any'].includes(param.type)) {
+      if (!["string", "number", "boolean", "any"].includes(param.type)) {
         allTypes.add(param.type);
       }
     });
@@ -107,8 +107,8 @@ import type {
   if (allTypes.size > 0) {
     const typeImports = Array.from(allTypes)
       .sort()
-      .map(t => `  ${t}`)
-      .join(',\n');
+      .map((t) => `  ${t}`)
+      .join(",\n");
     content += `${typeImports},\n} from './model';\n\n`;
   } else {
     content += `} from './model';\n\n`;
@@ -116,7 +116,7 @@ import type {
 
   // Group by tag directory
   const tagMap = {};
-  queryKeyFunctions.forEach(fn => {
+  queryKeyFunctions.forEach((fn) => {
     if (!tagMap[fn.tagDir]) {
       tagMap[fn.tagDir] = [];
     }
@@ -125,7 +125,7 @@ import type {
 
   // Generate imports from each API file
   Object.entries(tagMap).forEach(([tagDir, functions]) => {
-    const imports = functions.map(fn => `  ${fn.functionName}`).join(',\n  ');
+    const imports = functions.map((fn) => `  ${fn.functionName}`).join(",\n  ");
 
     content += `import {\n  ${imports},\n} from './api/${tagDir}/${tagDir}.api';\n`;
   });
@@ -133,16 +133,18 @@ import type {
   content += `\n`;
 
   // Generate hook functions
-  queryKeyFunctions.forEach(fn => {
+  queryKeyFunctions.forEach((fn) => {
     // Convert getFriendsController_findAllMyFriendsQueryKey to useInvalidateFriendsController_findAllMyFriends
-    const hookName = fn.functionName.replace(/^get/, 'useInvalidate').replace(/QueryKey$/, '');
+    const hookName = fn.functionName.replace(/^get/, "useInvalidate").replace(/QueryKey$/, "");
 
     // Generate parameter list for the hook with proper types and optional markers
     const hookParams =
-      fn.params.length > 0 ? fn.params.map(p => `${p.name}${p.isOptional ? '?' : ''}: ${p.type}`).join(', ') : '';
+      fn.params.length > 0
+        ? fn.params.map((p) => `${p.name}${p.isOptional ? "?" : ""}: ${p.type}`).join(", ")
+        : "";
 
     // Generate parameter list for the function call
-    const functionParams = fn.params.length > 0 ? fn.params.map(p => p.name).join(', ') : '';
+    const functionParams = fn.params.length > 0 ? fn.params.map((p) => p.name).join(", ") : "";
 
     content += `export const ${hookName} = () => {
   const queryClient = useQueryClient();
@@ -157,7 +159,15 @@ import type {
 };
 
 // Write the generated file
-const outputPath = path.join(__dirname, '..', '..', 'src', 'api', 'generated', 'invalidate-queries.ts');
+const outputPath = path.join(
+  __dirname,
+  "..",
+  "..",
+  "src",
+  "api",
+  "generated",
+  "invalidate-queries.ts",
+);
 const outputDir = path.dirname(outputPath);
 
 if (!fs.existsSync(outputDir)) {
@@ -165,7 +175,7 @@ if (!fs.existsSync(outputDir)) {
 }
 
 const content = generateInvalidateQueriesFile();
-fs.writeFileSync(outputPath, content, 'utf-8');
+fs.writeFileSync(outputPath, content, "utf-8");
 
 const queryKeyFunctions = extractQueryKeyFunctions();
 console.log(`✅ Generated invalidate queries file at ${outputPath}`);

@@ -22,7 +22,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard" className="text-text-muted hover:text-violet-principal font-semibold transition-colors">Admin</BreadcrumbLink>
+                  <BreadcrumbLink
+                    href="/admin/dashboard"
+                    className="text-text-muted hover:text-violet-principal font-semibold transition-colors"
+                  >
+                    Admin
+                  </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block text-text-muted" />
                 <BreadcrumbItem>
@@ -32,9 +37,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </Breadcrumb>
           </div>
         </header>
-        <main className="flex-1 px-8 pb-12 overflow-y-auto">
-          {children}
-        </main>
+        <main className="flex-1 px-8 pb-12 overflow-y-auto">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -8,7 +8,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  
+
   --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-mono-serif, monospace;
   --font-heading: "DM Sans", ui-sans-serif, system-ui, sans-serif;
@@ -63,7 +63,8 @@
   --radius-modal: 20px;
 
   --shadow-card: 4px 4px 16px rgba(106, 175, 173, 0.15), -2px -2px 8px rgba(255, 255, 255, 0.8);
-  --shadow-card-hover: 6px 6px 24px rgba(101, 47, 143, 0.18), -2px -2px 8px rgba(255, 255, 255, 0.9);
+  --shadow-card-hover:
+    6px 6px 24px rgba(101, 47, 143, 0.18), -2px -2px 8px rgba(255, 255, 255, 0.9);
   --shadow-btn: 0 4px 14px rgba(101, 47, 143, 0.35);
   --shadow-btn-hover: 0 6px 20px rgba(101, 47, 143, 0.5);
   --shadow-btn-destructive: 0 4px 14px rgba(122, 32, 32, 0.3);
@@ -73,87 +74,87 @@
 
 :root {
   /* Design System Colors */
-  --background: #F2F8F8;
-  --foreground: #1A1025;
-  --text-secondary: #5A4D6B;
-  
-  --card: #FFFFFF;
-  --card-foreground: #1A1025;
-  
-  --popover: #FFFFFF;
-  --popover-foreground: #1A1025;
-  
-  --primary: #652F8F;
-  --primary-foreground: #FFFFFF;
-  
-  --secondary: #EAF4F4;
-  --secondary-foreground: #652F8F;
-  
-  --muted: #EAF4F4;
-  --muted-foreground: #9B90A8;
-  
-  --accent: #864C9E;
-  --accent-foreground: #FFFFFF;
-  
-  --destructive: #7A2020;
-  --destructive-foreground: #FFFFFF;
-  
-  --border: #D0E8E8;
-  --input: #D0E8E8;
-  --ring: #864C9E;
+  --background: #f2f8f8;
+  --foreground: #1a1025;
+  --text-secondary: #5a4d6b;
+
+  --card: #ffffff;
+  --card-foreground: #1a1025;
+
+  --popover: #ffffff;
+  --popover-foreground: #1a1025;
+
+  --primary: #652f8f;
+  --primary-foreground: #ffffff;
+
+  --secondary: #eaf4f4;
+  --secondary-foreground: #652f8f;
+
+  --muted: #eaf4f4;
+  --muted-foreground: #9b90a8;
+
+  --accent: #864c9e;
+  --accent-foreground: #ffffff;
+
+  --destructive: #7a2020;
+  --destructive-foreground: #ffffff;
+
+  --border: #d0e8e8;
+  --input: #d0e8e8;
+  --ring: #864c9e;
 
   /* Custom palette colors */
-  --turquoise-light: #97CDCC;
-  --turquoise-medium: #6AAFAD;
-  --violet-principal: #864C9E;
-  --violet-deep: #652F8F;
-  --violet-night: #3C215A;
-  
+  --turquoise-light: #97cdcc;
+  --turquoise-medium: #6aafad;
+  --violet-principal: #864c9e;
+  --violet-deep: #652f8f;
+  --violet-night: #3c215a;
+
   --radius: 0.625rem;
 
   /* Sidebar (Violet Nuit) */
-  --sidebar: #3C215A;
+  --sidebar: #3c215a;
   --sidebar-foreground: rgba(255, 255, 255, 0.6);
-  --sidebar-primary: #864C9E;
-  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-primary: #864c9e;
+  --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: rgba(255, 255, 255, 0.08);
   --sidebar-accent-foreground: rgba(255, 255, 255, 0.85);
   --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #97CDCC;
+  --sidebar-ring: #97cdcc;
 }
 
 .dark {
-  --background: #0F0A18;
-  --foreground: #EDE8F5;
-  --text-secondary: #A898C0;
-  
-  --card: #1C1228;
-  --card-foreground: #EDE8F5;
-  
-  --popover: #1C1228;
-  --popover-foreground: #EDE8F5;
-  
-  --primary: #864C9E;
-  --primary-foreground: #FFFFFF;
-  
-  --secondary: #251B33;
-  --secondary-foreground: #A898C0;
-  
-  --muted: #251B33;
-  --muted-foreground: #A898C0;
-  
-  --accent: #652F8F;
-  --accent-foreground: #FFFFFF;
-  
-  --destructive: #B03030;
-  --destructive-foreground: #FFFFFF;
-  
-  --border: #2D243A;
-  --input: #2D243A;
-  --ring: #864C9E;
+  --background: #0f0a18;
+  --foreground: #ede8f5;
+  --text-secondary: #a898c0;
+
+  --card: #1c1228;
+  --card-foreground: #ede8f5;
+
+  --popover: #1c1228;
+  --popover-foreground: #ede8f5;
+
+  --primary: #864c9e;
+  --primary-foreground: #ffffff;
+
+  --secondary: #251b33;
+  --secondary-foreground: #a898c0;
+
+  --muted: #251b33;
+  --muted-foreground: #a898c0;
+
+  --accent: #652f8f;
+  --accent-foreground: #ffffff;
+
+  --destructive: #b03030;
+  --destructive-foreground: #ffffff;
+
+  --border: #2d243a;
+  --input: #2d243a;
+  --ring: #864c9e;
 
   /* Sidebar in dark mode could be even deeper */
-  --sidebar: #0F0A18;
+  --sidebar: #0f0a18;
   --sidebar-border: rgba(255, 255, 255, 0.05);
 }
 
@@ -163,12 +164,19 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
   }
   html {
     @apply font-sans;
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-heading font-bold text-text-primary;
   }
 }
@@ -181,11 +189,11 @@
   .soft-card:hover {
     @apply -translate-y-0.5 shadow-card-hover;
   }
-  
+
   .btn-primary {
     @apply bg-linear-to-br from-violet-deep to-violet-principal text-white rounded-btn px-5 py-2.5 font-semibold text-sm shadow-btn transition-all duration-150 border-none hover:shadow-btn-hover hover:-translate-y-px active:translate-y-0 active:shadow-btn;
   }
-  
+
   .btn-secondary {
     @apply bg-card text-violet-deep border-[1.5px] border-violet-principal rounded-btn px-5 py-2.5 font-semibold shadow-card transition-all duration-150 hover:-translate-y-px active:translate-y-0;
   }

@@ -1,12 +1,18 @@
+import { FieldsManagement } from "@/features/fields";
+
 export default function FieldsPage() {
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Terrain Management</h1>
-      <div className="rounded-xl border bg-card p-6">
-        <p className="text-muted-foreground italic">
-          Terrain list and map overview will be implemented here.
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">
+          Terrain Management
+        </h1>
+        <p className="text-text-secondary">
+          Browse and manage all sports fields registered on Ludora.
         </p>
       </div>
+
+      <FieldsManagement />
     </div>
   );
 }

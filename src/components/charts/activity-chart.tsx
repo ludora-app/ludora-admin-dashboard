@@ -40,24 +40,20 @@ export function ActivityChart() {
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-          <XAxis 
-            dataKey="name" 
-            axisLine={false} 
-            tickLine={false} 
-            tick={{ fill: "#64748B", fontSize: 12 }} 
+          <XAxis
+            dataKey="name"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: "#64748B", fontSize: 12 }}
             dy={10}
           />
-          <YAxis 
-            axisLine={false} 
-            tickLine={false} 
-            tick={{ fill: "#64748B", fontSize: 12 }} 
-          />
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: "#fff", 
-              borderRadius: "12px", 
-              border: "none", 
-              boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" 
+          <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748B", fontSize: 12 }} />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "#fff",
+              borderRadius: "12px",
+              border: "none",
+              boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
             }}
           />
           <Area
