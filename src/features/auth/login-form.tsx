@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { AlertCircle, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useAuthB2BLoginAdmin } from "@/api/generated/api/auth-b2b/auth-b2b.api";
-import { useAuthStore } from "@/services/auth-store";
+import { usersFindMe } from "@/api/generated/api/users/users.api";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -18,8 +18,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { AlertCircle, Loader2 } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuthStore } from "@/services/auth-store";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -32,6 +33,7 @@ export function LoginForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const setAuth = useAuthStore((state) => state.setAuth);
+  const setTokens = useAuthStore((state) => state.setTokens);
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -44,28 +46,54 @@ export function LoginForm() {
 
   const { mutate: login, isPending } = useAuthB2BLoginAdmin({
     mutation: {
-      onSuccess: (response) => {
-        // The custom Orval instance returns response.json(), so response is the body.
-        // The body structure is { data: { accessToken, refreshToken } }
-        const { accessToken, refreshToken } = response.data;
+      onSuccess: async (response) => {
+        try {
+          if (response.status !== 200) {
+            setError("Unexpected response from server");
+            return;
+          }
 
-        // Save tokens in React Query cache
-        queryClient.setQueryData(["auth-tokens"], {
-          accessToken,
-          refreshToken,
-        });
+          const { accessToken, refreshToken } = response.data.data;
 
-        // Existing Zustand auth storage (handles cookies & state)
-        setAuth(accessToken, refreshToken, {
-          id: "1",
-          email: "admin@ludora.com",
-          role: "admin",
-        });
+          // 1. Temporarily set tokens to allow findMe request to be authorized
+          setTokens(accessToken, refreshToken);
 
-        router.push("/admin/dashboard");
+          // 2. Fetch real user profile
+          const userResponse = await usersFindMe();
+
+          if (userResponse.status !== 200) {
+            setError("Failed to fetch user profile");
+            return;
+          }
+
+          const userData = userResponse.data.data;
+
+          // 3. Save tokens in React Query cache
+          queryClient.setQueryData(["auth-tokens"], {
+            accessToken,
+            refreshToken,
+          });
+
+          // 4. Update store with real user data
+          setAuth(accessToken, refreshToken, {
+            id: userData.uid,
+            email: userData.email || "admin@ludora.com",
+            role: "admin", // Hardcoded as this is the admin login endpoint
+          });
+
+          router.push("/admin/dashboard");
+        } catch (err) {
+          setError("Failed to fetch user profile after login");
+          console.error(err);
+        }
       },
       onError: (err: unknown) => {
-        setError((err as any)?.response?.data?.message || "Invalid email or password");
+        const error = err as Record<string, unknown>;
+        const response = error?.response as Record<string, unknown> | undefined;
+        const data = response?.data as Record<string, unknown> | undefined;
+        const message =
+          typeof data?.message === "string" ? data.message : "Invalid email or password";
+        setError(message);
       },
     },
   });

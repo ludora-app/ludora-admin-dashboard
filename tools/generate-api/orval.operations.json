@@ -35,6 +35,12 @@
       "useInfiniteQueryParam": "cursor"
     }
   },
+  "FieldsController_findAllFieldsAdmin": {
+    "query": {
+      "useInfinite": true,
+      "useInfiniteQueryParam": "cursor"
+    }
+  },
   "FriendsController_findAllMyFriends": {
     "query": {
       "useInfinite": true,

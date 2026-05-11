@@ -43,16 +43,16 @@ const data = {
     },
     {
       title: "Terrain Management",
-      url: "/admin/terrains",
+      url: "/admin/fields",
       icon: MapPin,
       items: [
         {
           title: "All Terrains",
-          url: "/admin/terrains",
+          url: "/admin/fields",
         },
         {
           title: "Pending Validation",
-          url: "/admin/terrains/pending",
+          url: "/admin/fields/pending",
         },
       ],
     },
@@ -104,7 +104,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent className="px-3">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[11px] font-bold tracking-[0.08em] text-white/35 uppercase px-4 mb-2">Platform</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[11px] font-bold tracking-[0.08em] text-white/35 uppercase px-4 mb-2">
+            Platform
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-1">
               {data.navMain.map((item) => {
@@ -117,13 +119,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       isActive={isActive}
                       className={cn(
                         "h-11 px-4 rounded-btn font-medium transition-all duration-150",
-                        isActive 
-                          ? "bg-violet-principal/35 text-white border-l-3 border-turquoise-light" 
-                          : "text-white/60 hover:bg-white/8 hover:text-white/85"
+                        isActive
+                          ? "bg-violet-principal/35 text-white border-l-3 border-turquoise-light"
+                          : "text-white/60 hover:bg-white/8 hover:text-white/85",
                       )}
                       render={
                         <a href={item.url}>
-                          {item.icon && <item.icon className={cn("size-5", isActive ? "text-white" : "text-inherit")} />}
+                          {item.icon && (
+                            <item.icon
+                              className={cn("size-5", isActive ? "text-white" : "text-inherit")}
+                            />
+                          )}
                           <span>{item.title}</span>
                         </a>
                       }
