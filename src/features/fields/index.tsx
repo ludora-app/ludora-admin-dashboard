@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { FieldFilters } from "./components/field-filters";
 import { FieldsList } from "./components/fields-list";
-import type { FieldsFindAllFieldsAdminStatus } from "@/api/generated/model/fieldsFindAllFieldsAdminStatus.api";
+import { FieldsFindAllFieldsAdminStatus } from "@/api/generated/model/fieldsFindAllFieldsAdminStatus.api";
 import type { FieldsFindAllFieldsAdminSportsItem } from "@/api/generated/model/fieldsFindAllFieldsAdminSportsItem.api";
 
 export function FieldsManagement() {
@@ -11,7 +11,9 @@ export function FieldsManagement() {
     search?: string;
     status?: FieldsFindAllFieldsAdminStatus;
     sports?: FieldsFindAllFieldsAdminSportsItem[];
-  }>({});
+  }>({
+    status: FieldsFindAllFieldsAdminStatus.PENDING,
+  });
 
   return (
     <div className="space-y-6">

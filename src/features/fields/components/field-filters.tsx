@@ -19,14 +19,16 @@ interface FieldFiltersProps {
 
 export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState<FieldsFindAllFieldsAdminStatus | "ALL">("ALL");
+  const [status, setStatus] = useState<FieldsFindAllFieldsAdminStatus | undefined>(
+    FieldsFindAllFieldsAdminStatus.PENDING,
+  );
   const [selectedSports, setSelectedSports] = useState<FieldsFindAllFieldsAdminSportsItem[]>([]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       onFiltersChange({
         search: search || undefined,
-        status: status === "ALL" ? undefined : status,
+        status: status,
         sports: selectedSports.length > 0 ? selectedSports : undefined,
       });
     }, 500);
@@ -36,7 +38,7 @@ export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
 
   const toggleSport = (sport: FieldsFindAllFieldsAdminSportsItem) => {
     setSelectedSports((prev) =>
-      prev.includes(sport) ? prev.filter((s) => s !== sport) : [...prev, sport]
+      prev.includes(sport) ? prev.filter((s) => s !== sport) : [...prev, sport],
     );
   };
 
@@ -74,8 +76,14 @@ export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
           <select
             id="status"
             className="w-full h-10 px-3 rounded-btn border border-border bg-background text-sm shadow-input focus:outline-none focus:ring-2 focus:ring-violet-principal/20"
-            value={status}
-            onChange={(e) => setStatus(e.target.value as any)}
+            value={status || "ALL"}
+            onChange={(e) =>
+              setStatus(
+                e.target.value === "ALL"
+                  ? undefined
+                  : (e.target.value as FieldsFindAllFieldsAdminStatus),
+              )
+            }
           >
             <option value="ALL">All Status</option>
             {Object.values(FieldsFindAllFieldsAdminStatus).map((s) => (
@@ -111,7 +119,8 @@ export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
                 variant={isSelected ? "default" : "secondary"}
                 className={cn(
                   "cursor-pointer transition-all hover:scale-105 py-1 px-3 select-none",
-                  !isSelected && "bg-background border-border text-text-secondary hover:bg-secondary/50"
+                  !isSelected &&
+                    "bg-background border-border text-text-secondary hover:bg-secondary/50",
                 )}
                 onClick={() => toggleSport(s)}
               >
