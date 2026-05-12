@@ -32,26 +32,26 @@ import { cn } from "@/lib/utils";
 const data = {
   navMain: [
     {
-      title: "Overview",
+      title: "Vue d'ensemble",
       url: "/admin/dashboard",
       icon: LayoutDashboard,
     },
     {
-      title: "User Management",
+      title: "Utilisateurs",
       url: "/admin/users",
       icon: Users,
     },
     {
-      title: "Terrain Management",
+      title: "Terrains",
       url: "/admin/fields",
       icon: MapPin,
       items: [
         {
-          title: "All Terrains",
+          title: "Tous les terrains",
           url: "/admin/fields",
         },
         {
-          title: "Pending Validation",
+          title: "En attente de validation",
           url: "/admin/fields/pending",
         },
       ],
@@ -62,7 +62,7 @@ const data = {
       icon: Calendar,
     },
     {
-      title: "Reports",
+      title: "Signalements",
       url: "/admin/reports",
       icon: AlertTriangle,
     },
@@ -105,7 +105,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent className="px-3">
         <SidebarGroup>
           <SidebarGroupLabel className="text-[11px] font-bold tracking-[0.08em] text-white/35 uppercase px-4 mb-2">
-            Platform
+            Plateforme
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-1">
@@ -145,13 +145,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              tooltip="Logout"
+              tooltip="Déconnexion"
               onClick={handleLogout}
               className="h-11 px-4 rounded-btn text-white/60 hover:bg-red-500/10 hover:text-red-400 transition-colors"
               render={
                 <button type="button">
                   <LogOut className="size-5" />
-                  <span className="font-medium">Logout</span>
+                  <span className="font-medium">Déconnexion</span>
                 </button>
               }
             />

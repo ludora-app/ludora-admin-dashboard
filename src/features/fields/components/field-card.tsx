@@ -4,11 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import type { FieldResponseDto } from "@/api/generated/model/fieldResponseDto.api";
 import { Check, Hourglass, MapPin, X } from "lucide-react";
+import { AdminFieldCollectionResponseData } from "@/api/generated/model";
 
 interface FieldCardProps {
-  field: FieldResponseDto;
+  field: AdminFieldCollectionResponseData;
 }
 
 const statusConfig = {
@@ -33,23 +33,25 @@ const statusConfig = {
 } as const;
 
 export function FieldCard({ field }: FieldCardProps) {
-  const mainImage = field.fieldImages?.sort((a, b) => a.order - b.order)[0]?.url;
-
   // Use status if available (admin view)
-  const status = ((field as any).status as string | undefined)?.toUpperCase() as keyof typeof statusConfig | undefined;
+  const status = ((field as any).status as string | undefined)?.toUpperCase() as
+    | keyof typeof statusConfig
+    | undefined;
   const config = status ? statusConfig[status] : null;
   const StatusIcon = config?.icon;
 
   return (
     <Link href={`/admin/fields/${field.uid}`} className="block group">
       <Card className="soft-card overflow-hidden h-full">
-        <div className="relative aspect-video w-full overflow-hidden bg-muted">
-          {mainImage ? (
+        <div className="relative aspect-video w-full overflow-hidden bg-muted rounded-lg">
+          {field.image ? (
             <Image
-              src={mainImage}
+              src={field.image}
               alt={field.name || "Field"}
               fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+              priority
+              className="object-cover transition-transform duration-300 group-hover:scale-105 "
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-turquoise-light/20 text-turquoise-medium">
@@ -62,9 +64,7 @@ export function FieldCard({ field }: FieldCardProps) {
               className={`absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-badge shadow-sm backdrop-blur-md z-10 border-transparent ${config.className}`}
             >
               <StatusIcon className={`h-3.5 w-3.5 ${config.iconColor}`} />
-              <span className="text-[10px] font-bold uppercase tracking-wider">
-                {config.label}
-              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider">{config.label}</span>
             </div>
           )}
         </div>

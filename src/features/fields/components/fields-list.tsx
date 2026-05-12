@@ -41,9 +41,9 @@ export function FieldsList({ filters }: FieldsListProps) {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center bg-error/10 rounded-card border border-error/20">
         <AlertCircle className="h-10 w-10 text-destructive mb-4" />
-        <h3 className="text-lg font-bold text-destructive">Failed to load fields</h3>
+        <h3 className="text-lg font-bold text-destructive">Échec du chargement des terrains</h3>
         <p className="text-text-secondary">
-          {(error as any)?.message || "An unexpected error occurred"}
+          {(error as any)?.message || "Une erreur inattendue est survenue"}
         </p>
       </div>
     );
@@ -55,8 +55,8 @@ export function FieldsList({ filters }: FieldsListProps) {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center bg-card rounded-card shadow-card">
         <Inbox className="h-10 w-10 text-text-muted mb-4" />
-        <h3 className="text-lg font-bold text-text-primary">No fields found</h3>
-        <p className="text-text-secondary">Try adjusting your filters or search query.</p>
+        <h3 className="text-lg font-bold text-text-primary">Aucun terrain trouvé</h3>
+        <p className="text-text-secondary">Essayez d'ajuster vos filtres ou votre recherche.</p>
       </div>
     );
   }

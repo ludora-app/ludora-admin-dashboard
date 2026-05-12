@@ -17,6 +17,12 @@ interface FieldFiltersProps {
   }) => void;
 }
 
+const STATUS_LABELS: Record<string, string> = {
+  PENDING: "En attente",
+  APPROVED: "Vérifié",
+  REJECTED: "Rejeté",
+};
+
 export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<FieldsFindAllFieldsAdminStatus | undefined>(
@@ -52,13 +58,13 @@ export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
             htmlFor="search"
             className="text-xs font-semibold uppercase tracking-wider text-text-muted"
           >
-            Search fields
+            Rechercher des terrains
           </Label>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
             <Input
               id="search"
-              placeholder="Search by name or address..."
+              placeholder="Rechercher par nom ou adresse..."
               className="pl-10 shadow-input border-border focus:shadow-input-focus"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -71,7 +77,7 @@ export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
             htmlFor="status"
             className="text-xs font-semibold uppercase tracking-wider text-text-muted"
           >
-            Status
+            Statut
           </Label>
           <select
             id="status"
@@ -85,10 +91,10 @@ export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
               )
             }
           >
-            <option value="ALL">All Status</option>
+            <option value="ALL">Tous les statuts</option>
             {Object.values(FieldsFindAllFieldsAdminStatus).map((s) => (
               <option key={s} value={s}>
-                {s.charAt(0) + s.slice(1).toLowerCase()}
+                {STATUS_LABELS[s] || s}
               </option>
             ))}
           </select>
@@ -98,7 +104,7 @@ export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">
-            Filter by Sports
+            Filtrer par Sports
           </Label>
           {selectedSports.length > 0 && (
             <button
@@ -106,7 +112,7 @@ export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
               className="text-[10px] font-bold text-violet-principal hover:underline flex items-center gap-1"
             >
               <X className="h-2.5 w-2.5" />
-              Clear all
+              Tout effacer
             </button>
           )}
         </div>
