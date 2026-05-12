@@ -5,14 +5,40 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import type { FieldResponseDto } from "@/api/generated/model/fieldResponseDto.api";
-import { MapPin } from "lucide-react";
+import { Check, Hourglass, MapPin, X } from "lucide-react";
 
 interface FieldCardProps {
   field: FieldResponseDto;
 }
 
+const statusConfig = {
+  APPROVED: {
+    icon: Check,
+    className: "bg-[#E8F5EE] text-[#1E6B42] border-[#E8F5EE]",
+    iconColor: "text-[#1E6B42]",
+    label: "Vérifié",
+  },
+  PENDING: {
+    icon: Hourglass,
+    className: "bg-[#FEF4E4] text-[#7A5010] border-[#FEF4E4]",
+    iconColor: "text-[#7A5010]",
+    label: "En attente",
+  },
+  REJECTED: {
+    icon: X,
+    className: "bg-[#FDECEC] text-[#7A2020] border-[#FDECEC]",
+    iconColor: "text-[#7A2020]",
+    label: "Rejeté",
+  },
+} as const;
+
 export function FieldCard({ field }: FieldCardProps) {
   const mainImage = field.fieldImages?.sort((a, b) => a.order - b.order)[0]?.url;
+
+  // Use status if available (admin view)
+  const status = ((field as any).status as string | undefined)?.toUpperCase() as keyof typeof statusConfig | undefined;
+  const config = status ? statusConfig[status] : null;
+  const StatusIcon = config?.icon;
 
   return (
     <Link href={`/admin/fields/${field.uid}`} className="block group">
@@ -28,6 +54,17 @@ export function FieldCard({ field }: FieldCardProps) {
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-turquoise-light/20 text-turquoise-medium">
               <MapPin className="h-10 w-10" />
+            </div>
+          )}
+
+          {config && StatusIcon && (
+            <div
+              className={`absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-badge shadow-sm backdrop-blur-md z-10 border-transparent ${config.className}`}
+            >
+              <StatusIcon className={`h-3.5 w-3.5 ${config.iconColor}`} />
+              <span className="text-[10px] font-bold uppercase tracking-wider">
+                {config.label}
+              </span>
             </div>
           )}
         </div>
