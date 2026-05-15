@@ -1,12 +1,12 @@
 "use client";
 
+import { Search, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { FieldsFindAllFieldsAdminSportsItem } from "@/api/generated/model/fieldsFindAllFieldsAdminSportsItem.api";
+import { FieldsFindAllFieldsAdminStatus } from "@/api/generated/model/fieldsFindAllFieldsAdminStatus.api";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Search, X } from "lucide-react";
-import { FieldsFindAllFieldsAdminStatus } from "@/api/generated/model/fieldsFindAllFieldsAdminStatus.api";
-import { FieldsFindAllFieldsAdminSportsItem } from "@/api/generated/model/fieldsFindAllFieldsAdminSportsItem.api";
-import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface FieldFiltersProps {
@@ -108,6 +108,7 @@ export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
           </Label>
           {selectedSports.length > 0 && (
             <button
+              type="button"
               onClick={clearSports}
               className="text-[10px] font-bold text-violet-principal hover:underline flex items-center gap-1"
             >
@@ -127,7 +128,7 @@ export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
                   "cursor-pointer transition-all hover:scale-105 py-1 px-3 select-none",
                   !isSelected &&
                     "bg-background border-border text-text-secondary hover:bg-secondary/50",
-                  isSelected && "shadow-md"
+                  isSelected && "shadow-md",
                 )}
                 onClick={() => toggleSport(s)}
               >

@@ -1,11 +1,11 @@
 "use client";
 
+import { Check, Hourglass, MapPin, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import type { AdminFieldCollectionResponseData } from "@/api/generated/model";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, Hourglass, MapPin, X } from "lucide-react";
-import { AdminFieldCollectionResponseData } from "@/api/generated/model";
 
 interface FieldCardProps {
   field: AdminFieldCollectionResponseData;
