@@ -3,16 +3,16 @@
 import { useState } from "react";
 import { FieldFilters } from "./components/field-filters";
 import { FieldsList } from "./components/fields-list";
-import { FieldsFindAllFieldsAdminStatus } from "@/api/generated/model/fieldsFindAllFieldsAdminStatus.api";
-import type { FieldsFindAllFieldsAdminSportsItem } from "@/api/generated/model/fieldsFindAllFieldsAdminSportsItem.api";
+import { FieldsAdminFindAllFieldsAdminStatus } from "@/api/generated/model/fieldsAdminFindAllFieldsAdminStatus.api";
+import type { FieldsAdminFindAllFieldsAdminSportsItem } from "@/api/generated/model/fieldsAdminFindAllFieldsAdminSportsItem.api";
 
 export function FieldsManagement() {
   const [filters, setFilters] = useState<{
     search?: string;
-    status?: FieldsFindAllFieldsAdminStatus;
-    sports?: FieldsFindAllFieldsAdminSportsItem[];
+    status?: FieldsAdminFindAllFieldsAdminStatus;
+    sports?: FieldsAdminFindAllFieldsAdminSportsItem[];
   }>({
-    status: FieldsFindAllFieldsAdminStatus.PENDING,
+    status: FieldsAdminFindAllFieldsAdminStatus.PENDING,
   });
 
   return (

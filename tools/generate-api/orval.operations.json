@@ -35,7 +35,7 @@
       "useInfiniteQueryParam": "cursor"
     }
   },
-  "FieldsController_findAllFieldsAdmin": {
+  "FieldsAdminController_findAllFieldsAdmin": {
     "query": {
       "useInfinite": true,
       "useInfiniteQueryParam": "cursor"

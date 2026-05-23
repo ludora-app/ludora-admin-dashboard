@@ -1,22 +1,22 @@
 "use client";
 
 import { AlertCircle, Inbox } from "lucide-react";
-import { useFieldsFindAllFieldsAdmin } from "@/api/generated/api/fields/fields.api";
-import type { FieldsFindAllFieldsAdminSportsItem } from "@/api/generated/model/fieldsFindAllFieldsAdminSportsItem.api";
-import type { FieldsFindAllFieldsAdminStatus } from "@/api/generated/model/fieldsFindAllFieldsAdminStatus.api";
+import { useFieldsAdminFindAllFieldsAdmin } from "@/api/generated/api/fields-admin/fields-admin.api";
+import type { FieldsAdminFindAllFieldsAdminSportsItem } from "@/api/generated/model/fieldsAdminFindAllFieldsAdminSportsItem.api";
+import type { FieldsAdminFindAllFieldsAdminStatus } from "@/api/generated/model/fieldsAdminFindAllFieldsAdminStatus.api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FieldCard } from "./field-card";
 
 interface FieldsListProps {
   filters: {
     search?: string;
-    status?: FieldsFindAllFieldsAdminStatus;
-    sports?: FieldsFindAllFieldsAdminSportsItem[];
+    status?: FieldsAdminFindAllFieldsAdminStatus;
+    sports?: FieldsAdminFindAllFieldsAdminSportsItem[];
   };
 }
 
 export function FieldsList({ filters }: FieldsListProps) {
-  const { data, isLoading, isError, error } = useFieldsFindAllFieldsAdmin({
+  const { data, isLoading, isError, error } = useFieldsAdminFindAllFieldsAdmin({
     ...filters,
     limit: 50,
   });
@@ -52,7 +52,7 @@ export function FieldsList({ filters }: FieldsListProps) {
     );
   }
 
-  const fields = data?.data?.data?.items || [];
+  const fields = data?.status === 200 ? data.data.data.items : [];
 
   if (fields.length === 0) {
     return (

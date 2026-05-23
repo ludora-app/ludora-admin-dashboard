@@ -2,8 +2,8 @@
 
 import { Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { FieldsFindAllFieldsAdminSportsItem } from "@/api/generated/model/fieldsFindAllFieldsAdminSportsItem.api";
-import { FieldsFindAllFieldsAdminStatus } from "@/api/generated/model/fieldsFindAllFieldsAdminStatus.api";
+import { FieldsAdminFindAllFieldsAdminSportsItem } from "@/api/generated/model/fieldsAdminFindAllFieldsAdminSportsItem.api";
+import { FieldsAdminFindAllFieldsAdminStatus } from "@/api/generated/model/fieldsAdminFindAllFieldsAdminStatus.api";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,8 +12,8 @@ import { cn } from "@/lib/utils";
 interface FieldFiltersProps {
   onFiltersChange: (filters: {
     search?: string;
-    status?: FieldsFindAllFieldsAdminStatus;
-    sports?: FieldsFindAllFieldsAdminSportsItem[];
+    status?: FieldsAdminFindAllFieldsAdminStatus;
+    sports?: FieldsAdminFindAllFieldsAdminSportsItem[];
   }) => void;
 }
 
@@ -25,10 +25,10 @@ const STATUS_LABELS: Record<string, string> = {
 
 export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState<FieldsFindAllFieldsAdminStatus | undefined>(
-    FieldsFindAllFieldsAdminStatus.PENDING,
+  const [status, setStatus] = useState<FieldsAdminFindAllFieldsAdminStatus | undefined>(
+    FieldsAdminFindAllFieldsAdminStatus.PENDING,
   );
-  const [selectedSports, setSelectedSports] = useState<FieldsFindAllFieldsAdminSportsItem[]>([]);
+  const [selectedSports, setSelectedSports] = useState<FieldsAdminFindAllFieldsAdminSportsItem[]>([]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -42,7 +42,7 @@ export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
     return () => clearTimeout(timer);
   }, [search, status, selectedSports, onFiltersChange]);
 
-  const toggleSport = (sport: FieldsFindAllFieldsAdminSportsItem) => {
+  const toggleSport = (sport: FieldsAdminFindAllFieldsAdminSportsItem) => {
     setSelectedSports((prev) =>
       prev.includes(sport) ? prev.filter((s) => s !== sport) : [...prev, sport],
     );
@@ -87,12 +87,12 @@ export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
               setStatus(
                 e.target.value === "ALL"
                   ? undefined
-                  : (e.target.value as FieldsFindAllFieldsAdminStatus),
+                  : (e.target.value as FieldsAdminFindAllFieldsAdminStatus),
               )
             }
           >
             <option value="ALL">Tous les statuts</option>
-            {Object.values(FieldsFindAllFieldsAdminStatus).map((s) => (
+            {Object.values(FieldsAdminFindAllFieldsAdminStatus).map((s) => (
               <option key={s} value={s}>
                 {STATUS_LABELS[s] || s}
               </option>
@@ -118,7 +118,7 @@ export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
           )}
         </div>
         <div className="flex flex-wrap gap-2">
-          {Object.values(FieldsFindAllFieldsAdminSportsItem).map((s) => {
+          {Object.values(FieldsAdminFindAllFieldsAdminSportsItem).map((s) => {
             const isSelected = selectedSports.includes(s);
             return (
               <Badge

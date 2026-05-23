@@ -3,18 +3,17 @@
 import { AlertCircle, ChevronLeft, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
-import { useFieldsFindOneForAdmin } from "@/api/generated/api/fields/fields.api";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FieldDetailsForm } from "@/features/fields/components/field-details-form";
-import { FieldImagesCarousel } from "@/features/fields/components/field-images-carousel";
 import { FieldInfoSection } from "@/features/fields/components/field-info-section";
 import { FieldSportsSection } from "@/features/fields/components/field-sports-section";
+import { useFieldsAdminFindOneForAdmin } from "@/api/generated/api/fields-admin/fields-admin.api";
 
 export default function FieldEditorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
 
-  const { data, isLoading, isError, error, refetch } = useFieldsFindOneForAdmin(id);
+  const { data, isLoading, isError, error, refetch } = useFieldsAdminFindOneForAdmin(id);
 
   if (isLoading) {
     return (
@@ -50,7 +49,9 @@ export default function FieldEditorPage({ params }: { params: Promise<{ id: stri
         <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center text-destructive mb-6">
           <AlertCircle className="h-8 w-8" />
         </div>
-        <h3 className="text-xl font-bold text-text-primary mb-2">Impossible de charger le terrain</h3>
+        <h3 className="text-xl font-bold text-text-primary mb-2">
+          Impossible de charger le terrain
+        </h3>
         <p className="text-text-secondary mb-8 max-w-md">{errorMessage}</p>
         <div className="flex gap-4">
           <Link href="/admin/fields">
@@ -66,7 +67,6 @@ export default function FieldEditorPage({ params }: { params: Promise<{ id: stri
       </div>
     );
   }
-
 
   const fieldData = data && data.status === 200 ? data.data.data : null;
 
@@ -100,7 +100,6 @@ export default function FieldEditorPage({ params }: { params: Promise<{ id: stri
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         {/* Main Content Area */}
         <div className="xl:col-span-2 space-y-8">
-          <FieldImagesCarousel images={fieldData.fieldImages} />
           <FieldDetailsForm field={fieldData} />
         </div>
 
