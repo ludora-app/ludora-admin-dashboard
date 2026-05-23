@@ -9,11 +9,22 @@ import { FieldDetailsForm } from "@/features/fields/components/field-details-for
 import { FieldInfoSection } from "@/features/fields/components/field-info-section";
 import { FieldSportsSection } from "@/features/fields/components/field-sports-section";
 import { useFieldsAdminFindOneForAdmin } from "@/api/generated/api/fields-admin/fields-admin.api";
+import type { UpdateFieldAdminFormDtoSportsItem } from "@/api/generated/model/updateFieldAdminFormDtoSportsItem.api";
 
 export default function FieldEditorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
 
   const { data, isLoading, isError, error, refetch } = useFieldsAdminFindOneForAdmin(id);
+
+  const fieldData = data && data.status === 200 ? data.data.data : null;
+
+  const [selectedSports, setSelectedSports] = React.useState<UpdateFieldAdminFormDtoSportsItem[]>([]);
+
+  React.useEffect(() => {
+    if (fieldData?.sports) {
+      setSelectedSports(fieldData.sports as unknown as UpdateFieldAdminFormDtoSportsItem[]);
+    }
+  }, [fieldData?.sports]);
 
   if (isLoading) {
     return (
@@ -68,8 +79,6 @@ export default function FieldEditorPage({ params }: { params: Promise<{ id: stri
     );
   }
 
-  const fieldData = data && data.status === 200 ? data.data.data : null;
-
   if (!fieldData) return null;
 
   return (
@@ -100,13 +109,13 @@ export default function FieldEditorPage({ params }: { params: Promise<{ id: stri
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         {/* Main Content Area */}
         <div className="xl:col-span-2 space-y-8">
-          <FieldDetailsForm field={fieldData} />
+          <FieldDetailsForm field={fieldData} selectedSports={selectedSports} />
         </div>
 
         {/* Sidebar Area */}
         <div className="space-y-6">
           <FieldInfoSection field={fieldData} />
-          <FieldSportsSection field={fieldData} />
+          <FieldSportsSection selectedSports={selectedSports} onSportsChange={setSelectedSports} />
         </div>
       </div>
     </div>

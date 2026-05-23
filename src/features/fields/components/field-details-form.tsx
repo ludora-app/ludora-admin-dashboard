@@ -2,13 +2,13 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, Hourglass, Info, Loader2, MapPin, Settings2, X } from "lucide-react";
+import { Info, Loader2, MapPin, Settings2 } from "lucide-react";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { getFieldsAdminFindOneForAdminQueryKey, useFieldsAdminUpdate } from "@/api/generated/api/fields-admin/fields-admin.api";
 import type { AdminFindOneFieldResponseData } from "@/api/generated/model/adminFindOneFieldResponseData.api";
-import { ImageFieldAdminDtoStatus } from "@/api/generated/model/imageFieldAdminDtoStatus.api";
+import type { ImageFieldAdminDtoStatus } from "@/api/generated/model/imageFieldAdminDtoStatus.api";
 import { UpdateFieldAdminFormDtoStatus } from "@/api/generated/model/updateFieldAdminFormDtoStatus.api";
 import type { UpdateFieldAdminFormDtoSportsItem } from "@/api/generated/model/updateFieldAdminFormDtoSportsItem.api";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FieldPhotosSection, PhotoState } from "./field-photos-section";
+import { FieldPhotosSection, type PhotoState } from "./field-photos-section";
 
 const fieldUpdateSchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
@@ -28,9 +28,10 @@ type FieldUpdateValues = z.infer<typeof fieldUpdateSchema>;
 
 interface FieldDetailsFormProps {
   field: AdminFindOneFieldResponseData;
+  selectedSports: UpdateFieldAdminFormDtoSportsItem[];
 }
 
-export function FieldDetailsForm({ field }: FieldDetailsFormProps) {
+export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProps) {
   const queryClient = useQueryClient();
   const [photos, setPhotos] = React.useState<PhotoState[]>(() => 
     field.fieldImages.map((img, index) => ({
@@ -94,7 +95,7 @@ export function FieldDetailsForm({ field }: FieldDetailsFormProps) {
         name: data.name,
         address: data.address,
         status: data.status,
-        sports: field.sports as unknown as UpdateFieldAdminFormDtoSportsItem[],
+        sports: selectedSports,
         imagesMetadata: JSON.stringify(imagesMetadata),
         images: newFiles.length > 0 ? newFiles : undefined,
       },
