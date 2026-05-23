@@ -95,6 +95,12 @@
       "useInfiniteQueryParam": "cursor"
     }
   },
+  "GeolocalisationController_getAddressAutocomplete": {
+    "query": {
+      "useInfinite": true,
+      "useInfiniteQueryParam": "cursor"
+    }
+  },
   "UsersController_findAll": {
     "query": {
       "useInfinite": true,

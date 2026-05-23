@@ -17,9 +17,10 @@ function fixQueryArrays() {
     // if (value !== undefined) {
     //   normalizedParams.append(key, value === null ? 'null' : value.toString())
     // }
-    
-    const oldPattern = /if \(value !== undefined\) \{\s+normalizedParams\.append\(key, value === null \? 'null' : value\.toString\(\)\)\s+\}/g;
-    
+
+    const oldPattern =
+      /if \(value !== undefined\) \{\s+normalizedParams\.append\(key, value === null \? 'null' : value\.toString\(\)\)\s+\}/g;
+
     const newPattern = `if (value !== undefined && value !== null) {
       if (Array.isArray(value)) {
         value.forEach(v => normalizedParams.append(key, v.toString()));

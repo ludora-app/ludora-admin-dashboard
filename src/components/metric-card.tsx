@@ -1,5 +1,5 @@
+import { type LucideIcon, TrendingDown, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
 
 interface MetricCardProps {
   title: string;

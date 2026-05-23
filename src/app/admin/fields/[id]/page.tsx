@@ -3,13 +3,13 @@
 import { AlertCircle, ChevronLeft, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
+import { useFieldsAdminFindOneForAdmin } from "@/api/generated/api/fields-admin/fields-admin.api";
+import type { UpdateFieldAdminFormDtoSportsItem } from "@/api/generated/model/updateFieldAdminFormDtoSportsItem.api";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FieldDetailsForm } from "@/features/fields/components/field-details-form";
 import { FieldInfoSection } from "@/features/fields/components/field-info-section";
 import { FieldSportsSection } from "@/features/fields/components/field-sports-section";
-import { useFieldsAdminFindOneForAdmin } from "@/api/generated/api/fields-admin/fields-admin.api";
-import type { UpdateFieldAdminFormDtoSportsItem } from "@/api/generated/model/updateFieldAdminFormDtoSportsItem.api";
 
 export default function FieldEditorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
@@ -18,7 +18,9 @@ export default function FieldEditorPage({ params }: { params: Promise<{ id: stri
 
   const fieldData = data && data.status === 200 ? data.data.data : null;
 
-  const [selectedSports, setSelectedSports] = React.useState<UpdateFieldAdminFormDtoSportsItem[]>([]);
+  const [selectedSports, setSelectedSports] = React.useState<UpdateFieldAdminFormDtoSportsItem[]>(
+    [],
+  );
 
   React.useEffect(() => {
     if (fieldData?.sports) {

@@ -30,10 +30,7 @@ export function FieldImagesCarousel({ images = [] }: FieldImagesCarouselProps) {
     emblaApi.on("select", onSelect);
   }, [emblaApi, onSelect]);
 
-  const sortedImages = React.useMemo(
-    () => [...images].sort((a, b) => a.order - b.order),
-    [images],
-  );
+  const sortedImages = React.useMemo(() => [...images].sort((a, b) => a.order - b.order), [images]);
 
   if (sortedImages.length === 0) {
     return (

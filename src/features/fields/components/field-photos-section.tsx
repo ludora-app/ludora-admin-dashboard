@@ -1,9 +1,9 @@
 "use client";
 
-import { Check, Hourglass, Plus, Trash2, X, Image as ImageIcon } from "lucide-react";
+import { Check, Hourglass, Image as ImageIcon, Plus, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import * as React from "react";
-import { ImageFieldAdminDto } from "@/api/generated/model/imageFieldAdminDto.api";
+import type { ImageFieldAdminDto } from "@/api/generated/model/imageFieldAdminDto.api";
 import { ImageFieldAdminDtoStatus } from "@/api/generated/model/imageFieldAdminDtoStatus.api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,7 +46,7 @@ const statusConfig = {
 } as const;
 
 export function FieldPhotosSection({ initialImages, onChange }: FieldPhotosSectionProps) {
-  const [photos, setPhotos] = React.useState<PhotoState[]>(() => 
+  const [photos, setPhotos] = React.useState<PhotoState[]>(() =>
     initialImages.map((img, index) => ({
       uid: img.uid,
       url: img.url,
@@ -54,12 +54,12 @@ export function FieldPhotosSection({ initialImages, onChange }: FieldPhotosSecti
       order: img.order ?? index,
       isNew: false,
       isDeleted: false,
-    }))
+    })),
   );
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  const activePhotos = photos.filter(p => !p.isDeleted);
+  const activePhotos = photos.filter((p) => !p.isDeleted);
   const canAddMore = activePhotos.length < 5;
 
   // Notify parent on any change
@@ -68,7 +68,7 @@ export function FieldPhotosSection({ initialImages, onChange }: FieldPhotosSecti
   }, [photos, onChange]);
 
   const handleStatusChange = (index: number, newStatus: ImageFieldAdminDtoStatus) => {
-    setPhotos(prev => {
+    setPhotos((prev) => {
       const newPhotos = [...prev];
       newPhotos[index] = { ...newPhotos[index], status: newStatus };
       return newPhotos;
@@ -76,7 +76,7 @@ export function FieldPhotosSection({ initialImages, onChange }: FieldPhotosSecti
   };
 
   const handleDelete = (index: number) => {
-    setPhotos(prev => {
+    setPhotos((prev) => {
       const newPhotos = [...prev];
       newPhotos[index] = { ...newPhotos[index], isDeleted: true };
       return newPhotos;
@@ -99,8 +99,8 @@ export function FieldPhotosSection({ initialImages, onChange }: FieldPhotosSecti
       isDeleted: false,
     }));
 
-    setPhotos(prev => [...prev, ...newPhotos]);
-    
+    setPhotos((prev) => [...prev, ...newPhotos]);
+
     // Clear input
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -122,23 +122,23 @@ export function FieldPhotosSection({ initialImages, onChange }: FieldPhotosSecti
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {photos.map((photo, index) => {
             if (photo.isDeleted) return null;
-            
+
             const currentStatus = photo.status as keyof typeof statusConfig;
             const config = statusConfig[currentStatus] || statusConfig.PENDING;
             const StatusIcon = config.icon;
 
             return (
-              <div 
-                key={photo.uid || `new-${index}`} 
+              <div
+                key={photo.uid || `new-${index}`}
                 className="group relative flex flex-col rounded-xl border border-border bg-surface-primary overflow-hidden shadow-sm hover:shadow-md transition-all"
               >
                 {/* Image Preview */}
                 <div className="relative aspect-video w-full bg-muted">
                   {photo.url ? (
-                    <Image 
-                      src={photo.url} 
-                      alt="Field" 
-                      fill 
+                    <Image
+                      src={photo.url}
+                      alt="Field"
+                      fill
                       className="object-cover"
                       unoptimized={photo.isNew} // Use unoptimized for local blobs
                     />
@@ -147,7 +147,7 @@ export function FieldPhotosSection({ initialImages, onChange }: FieldPhotosSecti
                       <ImageIcon className="h-8 w-8 text-text-muted" />
                     </div>
                   )}
-                  
+
                   {/* Delete Button */}
                   <Button
                     variant="destructive"
@@ -183,7 +183,12 @@ export function FieldPhotosSection({ initialImages, onChange }: FieldPhotosSecti
                         <option value="APPROVED">Vérifié</option>
                         <option value="REJECTED">Rejeté</option>
                       </select>
-                      <div className={cn("flex items-center justify-center h-8 w-8 rounded-md border shrink-0", config.color)}>
+                      <div
+                        className={cn(
+                          "flex items-center justify-center h-8 w-8 rounded-md border shrink-0",
+                          config.color,
+                        )}
+                      >
                         <StatusIcon className="h-4 w-4" />
                       </div>
                     </div>
@@ -222,7 +227,9 @@ export function FieldPhotosSection({ initialImages, onChange }: FieldPhotosSecti
           <div className="flex flex-col items-center justify-center py-8 text-center bg-muted/30 rounded-xl border border-dashed border-border">
             <ImageIcon className="h-12 w-12 text-text-muted/40 mb-3" />
             <p className="text-sm font-medium text-text-secondary">Aucune photo pour ce terrain</p>
-            <p className="text-xs text-text-muted mt-1">Ajoutez jusqu'à 5 photos pour illustrer le terrain</p>
+            <p className="text-xs text-text-muted mt-1">
+              Ajoutez jusqu'à 5 photos pour illustrer le terrain
+            </p>
           </div>
         )}
       </CardContent>

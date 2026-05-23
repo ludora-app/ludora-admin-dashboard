@@ -28,7 +28,9 @@ export function FieldFilters({ onFiltersChange }: FieldFiltersProps) {
   const [status, setStatus] = useState<FieldsAdminFindAllFieldsAdminStatus | undefined>(
     FieldsAdminFindAllFieldsAdminStatus.PENDING,
   );
-  const [selectedSports, setSelectedSports] = useState<FieldsAdminFindAllFieldsAdminSportsItem[]>([]);
+  const [selectedSports, setSelectedSports] = useState<FieldsAdminFindAllFieldsAdminSportsItem[]>(
+    [],
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {

@@ -3,12 +3,11 @@
 import { Check, Pencil, Trophy } from "lucide-react";
 import * as React from "react";
 import { UpdateFieldAdminFormDtoSportsItem } from "@/api/generated/model/updateFieldAdminFormDtoSportsItem.api";
+import type { BadgeProps } from "@/components/ui/badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-
-import type { BadgeProps } from "@/components/ui/badge";
 
 interface FieldSportsSectionProps {
   selectedSports: UpdateFieldAdminFormDtoSportsItem[];
@@ -38,7 +37,9 @@ export function FieldSportsSection({ selectedSports, onSportsChange }: FieldSpor
           size="icon"
           className={cn(
             "h-8 w-8 rounded-full transition-colors",
-            isEditing ? "bg-turquoise-medium/10 text-turquoise-medium hover:bg-turquoise-medium/20" : "hover:bg-violet-principal/10 text-violet-principal"
+            isEditing
+              ? "bg-turquoise-medium/10 text-turquoise-medium hover:bg-turquoise-medium/20"
+              : "hover:bg-violet-principal/10 text-violet-principal",
           )}
           onClick={() => setIsEditing(!isEditing)}
           title={isEditing ? "Valider la sélection" : "Modifier les sports"}
@@ -58,8 +59,9 @@ export function FieldSportsSection({ selectedSports, onSportsChange }: FieldSpor
                   variant={isSelected ? (sport as BadgeProps["variant"]) : "outline"}
                   className={cn(
                     "px-3 py-1 cursor-pointer transition-all hover:scale-105 select-none",
-                    !isSelected && "bg-background border-border text-text-muted hover:bg-surface-secondary hover:text-text-primary",
-                    isSelected && "shadow-sm"
+                    !isSelected &&
+                      "bg-background border-border text-text-muted hover:bg-surface-secondary hover:text-text-primary",
+                    isSelected && "shadow-sm",
                   )}
                   onClick={() => toggleSport(sport)}
                 >

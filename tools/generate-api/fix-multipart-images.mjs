@@ -19,12 +19,13 @@ function fixMultipartImages() {
   // On sépare les métadonnées du fichier binaire
   // Note: On utilise une regex qui capture le nom de la variable (updateFieldAdminDto ou updateFieldAdminFormDto)
   // On cherche d'abord si le fichier a déjà été patché pour pouvoir le re-patcher si besoin
-  
+
   const patchedPattern = /formData\.append\('images_metadata', JSON\.stringify\(metadata\)\);/g;
   if (patchedPattern.test(content)) {
-    content = content.replace(/images_metadata/g, 'images');
+    content = content.replace(/images_metadata/g, "images");
   } else {
-    const oldPattern = /if\(([^.]+)\.images !== undefined\) \{\s+\1\.images\.forEach\(value => formData\.append\(`images`, JSON\.stringify\(value\)\)\);\s+\}/g;
+    const oldPattern =
+      /if\(([^.]+)\.images !== undefined\) \{\s+\1\.images\.forEach\(value => formData\.append\(`images`, JSON\.stringify\(value\)\)\);\s+\}/g;
     content = content.replace(oldPattern, (match, varName) => {
       return `if(${varName}.images !== undefined) {
     ${varName}.images.forEach(value => {

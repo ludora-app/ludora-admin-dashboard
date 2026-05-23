@@ -5,12 +5,12 @@ import {
   Calendar,
   ClipboardList,
   LayoutDashboard,
+  LogOut,
   MapPin,
   Users,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type * as React from "react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -24,10 +24,8 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { LogOut } from "lucide-react";
-import { useAuthStore } from "@/services/auth-store";
-import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/services/auth-store";
 
 const data = {
   navMain: [

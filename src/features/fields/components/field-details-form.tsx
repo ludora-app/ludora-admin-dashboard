@@ -4,24 +4,31 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { Info, Loader2, MapPin, Settings2 } from "lucide-react";
 import * as React from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-import { getFieldsAdminFindOneForAdminQueryKey, useFieldsAdminUpdate } from "@/api/generated/api/fields-admin/fields-admin.api";
+import {
+  getFieldsAdminFindOneForAdminQueryKey,
+  useFieldsAdminUpdate,
+} from "@/api/generated/api/fields-admin/fields-admin.api";
 import type { AdminFindOneFieldResponseData } from "@/api/generated/model/adminFindOneFieldResponseData.api";
 import type { ImageFieldAdminDtoStatus } from "@/api/generated/model/imageFieldAdminDtoStatus.api";
-import { UpdateFieldAdminFormDtoStatus } from "@/api/generated/model/updateFieldAdminFormDtoStatus.api";
 import type { UpdateFieldAdminFormDtoSportsItem } from "@/api/generated/model/updateFieldAdminFormDtoSportsItem.api";
+import { UpdateFieldAdminFormDtoStatus } from "@/api/generated/model/updateFieldAdminFormDtoStatus.api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AddressAutocomplete } from "./address-autocomplete";
 import { FieldPhotosSection, type PhotoState } from "./field-photos-section";
 
 const fieldUpdateSchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
   address: z.string().min(5, "L'adresse est trop courte"),
   status: z.nativeEnum(UpdateFieldAdminFormDtoStatus),
+  shortAddress: z.string().optional(),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
 });
 
 type FieldUpdateValues = z.infer<typeof fieldUpdateSchema>;
@@ -33,7 +40,7 @@ interface FieldDetailsFormProps {
 
 export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProps) {
   const queryClient = useQueryClient();
-  const [photos, setPhotos] = React.useState<PhotoState[]>(() => 
+  const [photos, setPhotos] = React.useState<PhotoState[]>(() =>
     field.fieldImages.map((img, index) => ({
       uid: img.uid,
       url: img.url,
@@ -41,7 +48,7 @@ export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProp
       order: img.order ?? index,
       isNew: false,
       isDeleted: false,
-    }))
+    })),
   );
 
   const { mutate, isPending } = useFieldsAdminUpdate({
@@ -54,7 +61,8 @@ export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProp
       },
       onError: (error: any) => {
         const errorData = error?.response?.data;
-        const message = errorData?.message || error?.message || "Une erreur est survenue lors de la mise à jour.";
+        const message =
+          errorData?.message || error?.message || "Une erreur est survenue lors de la mise à jour.";
         alert(`Erreur : ${Array.isArray(message) ? message.join(", ") : message}`);
       },
     },
@@ -63,6 +71,9 @@ export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProp
   const {
     register,
     handleSubmit,
+    control,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<FieldUpdateValues>({
     resolver: zodResolver(fieldUpdateSchema),
@@ -70,8 +81,13 @@ export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProp
       name: field.name || "",
       address: field.address || "",
       status: field.status as UpdateFieldAdminFormDtoStatus,
+      shortAddress: field.shortAddress || "",
+      latitude: field.latitude,
+      longitude: field.longitude,
     },
   });
+
+  const watchedLocation = watch(["shortAddress", "latitude", "longitude"]);
 
   const onSubmit = (data: FieldUpdateValues) => {
     // Metadata for all non-deleted images (existing keep their uid, new ones don't have uid)
@@ -122,7 +138,10 @@ export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProp
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="status-select" className="text-[10px] font-bold uppercase tracking-wider text-text-muted">
+            <Label
+              htmlFor="status-select"
+              className="text-[10px] font-bold uppercase tracking-wider text-text-muted"
+            >
               Modifier le statut
             </Label>
             <div className="flex items-center gap-3">
@@ -182,7 +201,22 @@ export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProp
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="address">Adresse complète</Label>
-              <Input id="address" className="shadow-input" {...register("address")} />
+              <Controller
+                name="address"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <AddressAutocomplete
+                    value={value}
+                    onChange={onChange}
+                    onSelect={(data) => {
+                      setValue("address", data.address);
+                      setValue("shortAddress", data.shortAddress);
+                      setValue("latitude", data.latitude);
+                      setValue("longitude", data.longitude);
+                    }}
+                  />
+                )}
+              />
               {errors.address && (
                 <p className="text-xs text-destructive">{errors.address.message}</p>
               )}
@@ -191,7 +225,7 @@ export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProp
               <Label htmlFor="shortAddress">Adresse courte (Lecture seule)</Label>
               <Input
                 id="shortAddress"
-                value={field.shortAddress}
+                value={watchedLocation[0] || ""}
                 disabled
                 className="bg-muted/50"
               />
@@ -201,7 +235,7 @@ export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProp
                 <Label htmlFor="latitude">Latitude (Lecture seule)</Label>
                 <Input
                   id="latitude"
-                  value={field.latitude}
+                  value={watchedLocation[1] || ""}
                   disabled
                   className="bg-muted/50"
                 />
@@ -210,7 +244,7 @@ export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProp
                 <Label htmlFor="longitude">Longitude (Lecture seule)</Label>
                 <Input
                   id="longitude"
-                  value={field.longitude}
+                  value={watchedLocation[2] || ""}
                   disabled
                   className="bg-muted/50"
                 />
@@ -221,8 +255,8 @@ export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProp
       </div>
 
       <div className="flex justify-end pt-4">
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           className="btn-primary w-full md:w-auto px-12 gap-2"
           disabled={isPending}
         >
