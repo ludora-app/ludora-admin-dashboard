@@ -183,7 +183,7 @@ export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProp
               {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="type">Type de terrain (Lecture seule)</Label>
+              <Label htmlFor="type">Type de terrain </Label>
               <Input id="type" value={field.type} disabled className="bg-muted/50" />
             </div>
           </CardContent>
@@ -222,7 +222,7 @@ export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProp
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="shortAddress">Adresse courte (Lecture seule)</Label>
+              <Label htmlFor="shortAddress">Adresse courte </Label>
               <Input
                 id="shortAddress"
                 value={watchedLocation[0] || ""}
@@ -232,7 +232,7 @@ export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProp
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="latitude">Latitude (Lecture seule)</Label>
+                <Label htmlFor="latitude">Latitude </Label>
                 <Input
                   id="latitude"
                   value={watchedLocation[1] || ""}
@@ -241,7 +241,7 @@ export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProp
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="longitude">Longitude (Lecture seule)</Label>
+                <Label htmlFor="longitude">Longitude </Label>
                 <Input
                   id="longitude"
                   value={watchedLocation[2] || ""}
