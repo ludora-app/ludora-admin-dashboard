@@ -43,25 +43,25 @@ export function AddressAutocomplete({
   // Robust path to suggestions to handle different potential Orval/customInstance nesting
   const suggestions = React.useMemo(() => {
     if (!data) return [];
-    
+
     const response = data as any;
-    
+
     // Option 1: Nesting according to models and customInstance (response.data.data.items)
     // response.data is the body, response.data.data is the payload
     if (response.data?.data?.items) {
       return response.data.data.items as AddressAutocompleteResponseData[];
     }
-    
+
     // Option 2: response.data.items (standard Orval wrapping if body was payload)
     if (response.data?.items) {
       return response.data.items as AddressAutocompleteResponseData[];
     }
-    
+
     // Option 3: response.items (if somehow not wrapped by customInstance)
     if (response.items) {
       return response.items as AddressAutocompleteResponseData[];
     }
-    
+
     return [] as AddressAutocompleteResponseData[];
   }, [data]);
 
@@ -79,7 +79,8 @@ export function AddressAutocomplete({
   };
 
   const showLoading = (isLoading || isFetching) && suggestions.length === 0;
-  const showNoResults = !isLoading && !isFetching && suggestions.length === 0 && searchQuery.length >= 15;
+  const showNoResults =
+    !isLoading && !isFetching && suggestions.length === 0 && searchQuery.length >= 15;
 
   return (
     <div className={cn("relative w-full", className)}>
@@ -100,13 +101,15 @@ export function AddressAutocomplete({
               }}
             />
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
-              {(isLoading || isFetching) && <Loader2 className="h-4 w-4 animate-spin text-text-muted/60" />}
+              {(isLoading || isFetching) && (
+                <Loader2 className="h-4 w-4 animate-spin text-text-muted/60" />
+              )}
               <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50 text-text-muted" />
             </div>
           </div>
         </PopoverTrigger>
-        <PopoverContent 
-          className="p-1 w-[400px] max-w-[calc(100vw-2rem)] overflow-hidden bg-popover border border-border shadow-xl rounded-xl z-50" 
+        <PopoverContent
+          className="p-1 w-[400px] max-w-[calc(100vw-2rem)] overflow-hidden bg-popover border border-border shadow-xl rounded-xl z-50"
           align="start"
           sideOffset={8}
           onOpenAutoFocus={(e) => e.preventDefault()}
@@ -118,7 +121,7 @@ export function AddressAutocomplete({
                 <span>Recherche d'adresses...</span>
               </div>
             )}
-            
+
             {showNoResults && (
               <div className="py-8 text-center text-sm text-text-muted flex flex-col items-center gap-2">
                 <span className="text-lg">📍</span>
@@ -128,7 +131,8 @@ export function AddressAutocomplete({
 
             {searchQuery.length > 0 && searchQuery.length < 15 && (
               <div className="py-4 px-3 text-center text-xs text-text-muted bg-surface-secondary/50 rounded-lg mx-1">
-                Continuez à taper pour voir les suggestions (encore {15 - searchQuery.length} caractères)
+                Continuez à taper pour voir les suggestions (encore {15 - searchQuery.length}{" "}
+                caractères)
               </div>
             )}
 
@@ -145,14 +149,24 @@ export function AddressAutocomplete({
                   className={cn(
                     "group w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all text-left",
                     "hover:bg-violet-principal/10 hover:text-violet-principal",
-                    value === item.address ? "bg-violet-principal/5 text-violet-principal font-medium" : "text-text-primary"
+                    value === item.address
+                      ? "bg-violet-principal/5 text-violet-principal font-medium"
+                      : "text-text-primary",
                   )}
                 >
-                  <div className={cn(
-                    "flex items-center justify-center h-5 w-5 rounded-full border shrink-0 transition-colors",
-                    value === item.address ? "bg-violet-principal border-violet-principal text-white" : "border-border text-text-muted group-hover:border-violet-principal/50"
-                  )}>
-                    {value === item.address ? <Check className="h-3 w-3" /> : <span className="text-[10px] opacity-0 group-hover:opacity-100">GO</span>}
+                  <div
+                    className={cn(
+                      "flex items-center justify-center h-5 w-5 rounded-full border shrink-0 transition-colors",
+                      value === item.address
+                        ? "bg-violet-principal border-violet-principal text-white"
+                        : "border-border text-text-muted group-hover:border-violet-principal/50",
+                    )}
+                  >
+                    {value === item.address ? (
+                      <Check className="h-3 w-3" />
+                    ) : (
+                      <span className="text-[10px] opacity-0 group-hover:opacity-100">GO</span>
+                    )}
                   </div>
                   <span className="truncate">{item.address}</span>
                 </button>

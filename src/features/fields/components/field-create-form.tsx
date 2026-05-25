@@ -40,7 +40,7 @@ export function FieldCreateForm({ selectedSports }: FieldCreateFormProps) {
         const newFieldUid = responseData?.uid;
 
         if (newFieldUid) {
-          // Use window.location.href for a clean full-page load 
+          // Use window.location.href for a clean full-page load
           // to avoid potential client-side routing issues in experimental Next.js versions
           window.location.href = `/admin/fields/${newFieldUid}`;
         } else {
@@ -227,4 +227,3 @@ export function FieldCreateForm({ selectedSports }: FieldCreateFormProps) {
     </form>
   );
 }
-

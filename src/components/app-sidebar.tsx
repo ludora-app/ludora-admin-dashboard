@@ -1,14 +1,7 @@
 "use client";
 
-import {
-  AlertTriangle,
-  Calendar,
-  ClipboardList,
-  LayoutDashboard,
-  LogOut,
-  MapPin,
-  Users,
-} from "lucide-react";
+import { AlertTriangle, Calendar, LayoutDashboard, LogOut, MapPin, Users } from "lucide-react";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import type * as React from "react";
 import {
@@ -88,7 +81,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               render={
                 <a href="/admin/dashboard" className="flex items-center gap-3">
                   <div className="flex aspect-square size-10 items-center justify-center rounded-xl bg-violet-principal/20 text-turquoise-light shadow-card">
-                    <ClipboardList className="size-5" />
+                    <Image src="/logo.png" alt="Logo Ludora" width={40} height={40} priority />
                   </div>
                   <div className="flex flex-col gap-0.5 leading-none">
                     <span className="font-bold text-white text-base">Ludora Admin</span>
