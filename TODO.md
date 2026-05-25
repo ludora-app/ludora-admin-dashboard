@@ -1,3 +1,2 @@
-- layout /field/[id] + bouton enregistrer en overlay
-- redirection sur /login si page inconnue + non auth, si page inconnue + auth -> /dashboard
+- state sidebar non sauvegardé -> quand la barre est collapsed et qu'on change de page la barre se développe
 - audit sécurité
