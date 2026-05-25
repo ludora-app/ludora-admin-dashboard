@@ -72,7 +72,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <Sidebar collapsible="icon" className="bg-violet-night border-r-white/5" {...props}>
-      <SidebarHeader className="p-6">
+      <SidebarHeader className="p-6 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:py-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
@@ -80,8 +80,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="hover:bg-white/5 h-auto p-0"
               render={
                 <a href="/admin/dashboard" className="flex items-center gap-3">
-                  <div className="flex aspect-square size-10 items-center justify-center rounded-xl bg-violet-principal/20 text-turquoise-light shadow-card">
-                    <Image src="/logo.png" alt="Logo Ludora" width={40} height={40} priority />
+                  <div className="flex aspect-square size-10 group-data-[collapsible=icon]:size-8 items-center justify-center rounded-xl bg-violet-principal/20 text-turquoise-light">
+                    <Image
+                      src="/logo.png"
+                      alt="Logo Ludora"
+                      width={40}
+                      height={40}
+                      className="size-7 group-data-[collapsible=icon]:size-5 object-contain"
+                      priority
+                    />
                   </div>
                   <div className="flex flex-col gap-0.5 leading-none">
                     <span className="font-bold text-white text-base">Ludora Admin</span>
@@ -93,7 +100,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent className="px-3">
+      <SidebarContent className="px-3 group-data-[collapsible=icon]:px-0">
         <SidebarGroup>
           <SidebarGroupLabel className="text-[11px] font-bold tracking-[0.08em] text-white/35 uppercase px-4 mb-2">
             Plateforme
@@ -111,7 +118,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       className={cn(
                         "h-11 px-4 rounded-btn font-medium transition-all duration-150",
                         isActive
-                          ? "bg-violet-principal/35 text-white border-l-3 border-turquoise-light"
+                          ? "bg-violet-principal/35 text-white group-data-[state=expanded]:border-l-3 group-data-[state=expanded]:border-turquoise-light"
                           : "text-white/60 hover:bg-white/8 hover:text-white/85",
                       )}
                       render={
@@ -132,7 +139,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="p-4 border-t border-white/5">
+      <SidebarFooter className="p-4 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:py-3 border-t border-white/5">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
