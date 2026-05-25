@@ -8,20 +8,18 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-linear-to-br from-violet-deep to-violet-principal text-white shadow-btn border-none hover:shadow-btn-hover hover:-translate-y-px active:shadow-btn active:translate-y-0",
+        default:
+          "bg-linear-to-br from-violet-deep to-violet-principal text-white shadow-btn border-none hover:shadow-btn-hover hover:-translate-y-px active:shadow-btn active:translate-y-0",
         outline:
           "border-[1.5px] border-violet-principal bg-card text-violet-deep shadow-card hover:-translate-y-px hover:bg-violet-principal/5 active:translate-y-0",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost:
-          "hover:bg-violet-principal/10 hover:text-violet-deep",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-violet-principal/10 hover:text-violet-deep",
         destructive:
           "bg-linear-to-br from-[#7A2020] to-[#B03030] text-white shadow-btn-destructive hover:-translate-y-px active:translate-y-0",
         link: "text-violet-deep underline-offset-4 hover:underline",
       },
       size: {
-        default:
-          "h-10 gap-2 px-5 py-2.5",
+        default: "h-10 gap-2 px-5 py-2.5",
         xs: "h-6 gap-1 px-2 text-xs",
         sm: "h-8 gap-1.5 px-3 text-xs",
         lg: "h-12 gap-2 px-8 text-base",

@@ -28,9 +28,9 @@ Implement the base layout and routing hierarchy as defined in the project's tech
 - `/admin/dashboard`: Global statistics (Home)
 - `/admin/users`: User management list
 - `/admin/users/[id]`: User profile detail
-- `/admin/terrains`: Terrain management
-- `/admin/terrains/pending`: Validation queue
-- `/admin/terrains/[id]`: Terrain editor
+- `/admin/fields`: Terrain management
+- `/admin/fields/pending`: Validation queue
+- `/admin/fields/[id]`: Terrain editor
 - `/admin/sessions`: Sports sessions overview
 - `/admin/reports`: Moderation/Signalements center
 
@@ -45,7 +45,7 @@ Implement the base layout and routing hierarchy as defined in the project's tech
 - `components/admin/sidebar.tsx`: Navigation sidebar component.
 - `app/admin/dashboard/page.tsx`
 - `app/admin/users/page.tsx` & `app/admin/users/[id]/page.tsx`
-- `app/admin/terrains/page.tsx`, `app/admin/terrains/pending/page.tsx`, & `app/admin/terrains/[id]/page.tsx`
+- `app/admin/fields/page.tsx`, `app/admin/fields/pending/page.tsx`, & `app/admin/fields/[id]/page.tsx`
 - `app/admin/sessions/page.tsx`
 - `app/admin/reports/page.tsx`
 
@@ -86,4 +86,4 @@ The following libraries are required for the skeleton:
 2. Visit `/admin/dashboard` and verify the sidebar is present.
 3. Click through each sidebar link to ensure all pages load correctly.
 4. Resize the browser window to verify the mobile navigation behavior.
-5. Manually enter a nested URL (e.g., `/admin/terrains/pending`) and verify the layout.
+5. Manually enter a nested URL (e.g., `/admin/fields/pending`) and verify the layout.

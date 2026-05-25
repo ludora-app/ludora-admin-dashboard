@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 const ACCESS_TOKEN_KEY = "ludora_access_token";
 const REFRESH_TOKEN_KEY = "ludora_refresh_token";

@@ -1,11 +1,11 @@
 "use client";
 
-import { MetricCard } from "@/components/metric-card";
-import { Users, Calendar, MapPin, Activity } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { usePrometheusMetric } from "@/hooks/use-prometheus-metrics";
+import { Activity, Calendar, MapPin, Users } from "lucide-react";
 import { ActivityChart } from "@/components/charts/activity-chart";
+import { MetricCard } from "@/components/metric-card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { usePrometheusMetric } from "@/hooks/use-prometheus-metrics";
 
 export default function DashboardPage() {
   // const { data: usersData, isLoading: isLoadingUsers } = usePrometheusMetric("total_users");

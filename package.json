@@ -10,16 +10,20 @@
     "format": "biome format . --write",
     "check": "biome check --write .",
     "inject:env": "bash tools/vault/inject-env.sh",
-    "generate:api": "rm -rf src/api/generated && pnpm inject:env node tools/generate-api/download-swagger.mjs && pnpm inject:env node tools/generate-api/orval.mjs && pnpm inject:env pnpm orval && node tools/generate-api/remove-controller.mjs && node tools/generate-api/fix-rq-v5.mjs && node tools/generate-api/generate-invalidate-queries.mjs"
+    "generate:api": "rm -rf src/api/generated && pnpm inject:env node tools/generate-api/download-swagger.mjs && pnpm inject:env node tools/generate-api/orval.mjs && pnpm inject:env pnpm orval && node tools/generate-api/remove-controller.mjs && node tools/generate-api/fix-rq-v5.mjs && node tools/generate-api/fix-query-arrays.mjs && node tools/generate-api/generate-invalidate-queries.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
     "@hookform/resolvers": "^5.2.2",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-popover": "^1.1.15",
     "@tanstack/react-query": "^5.100.6",
     "@tanstack/react-query-devtools": "^5.100.6",
     "@types/js-cookie": "^3.0.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "embla-carousel-react": "^8.6.0",
     "js-cookie": "^3.0.5",
     "lucide-react": "^1.14.0",
     "next": "16.2.4",

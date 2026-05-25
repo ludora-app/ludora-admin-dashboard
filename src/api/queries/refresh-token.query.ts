@@ -2,7 +2,7 @@ import ky from "ky";
 
 import { getApiUrl } from "@/utils/api-url";
 
-import { RefreshTokenDto, RefreshTokenResponseDto } from "../generated/model";
+import type { RefreshTokenDto, RefreshTokenResponseDto } from "../generated/model";
 
 export const POST = async (refreshToken: RefreshTokenDto["refreshToken"]) => {
   const response = await ky

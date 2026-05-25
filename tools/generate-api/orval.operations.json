@@ -35,6 +35,12 @@
       "useInfiniteQueryParam": "cursor"
     }
   },
+  "FieldsAdminController_findAllFieldsAdmin": {
+    "query": {
+      "useInfinite": true,
+      "useInfiniteQueryParam": "cursor"
+    }
+  },
   "FriendsController_findAllMyFriends": {
     "query": {
       "useInfinite": true,
@@ -84,6 +90,12 @@
     }
   },
   "NotificationsController_findAll": {
+    "query": {
+      "useInfinite": true,
+      "useInfiniteQueryParam": "cursor"
+    }
+  },
+  "GeolocalisationController_getAddressAutocomplete": {
     "query": {
       "useInfinite": true,
       "useInfiniteQueryParam": "cursor"
