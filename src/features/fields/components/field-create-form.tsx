@@ -195,28 +195,36 @@ export function FieldCreateForm({ selectedSports }: FieldCreateFormProps) {
         </CardContent>
       </Card>
 
-      {/* Action Buttons */}
-      <div className="flex items-center justify-end gap-4 pt-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => router.back()}
-          disabled={isPending}
-          className="btn-secondary"
-        >
-          Annuler
-        </Button>
-        <Button type="submit" disabled={isPending} className="btn-primary min-w-[150px]">
-          {isPending ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Création...
-            </>
-          ) : (
-            "Créer le terrain"
-          )}
-        </Button>
+      <div className="fixed bottom-0 left-0 right-0 sm:bottom-8 sm:right-8 sm:left-auto z-50 animate-in fade-in slide-in-from-bottom-6 duration-500">
+        <div className="bg-card/95 backdrop-blur-xl border-t sm:border border-border/40 sm:border-violet-principal/20 sm:rounded-2xl p-4 sm:p-3 shadow-[0_-8px_30px_rgb(0,0,0,0.08)] sm:shadow-2xl flex items-center justify-center sm:justify-end gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.back()}
+            disabled={isPending}
+            className="btn-secondary flex-1 sm:flex-initial"
+          >
+            Annuler
+          </Button>
+          <Button
+            type="submit"
+            disabled={isPending}
+            className="btn-primary flex-1 sm:min-w-[150px] shadow-lg gap-2"
+          >
+            {isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Création...
+              </>
+            ) : (
+              "Créer le terrain"
+            )}
+          </Button>
+        </div>
       </div>
+
+      <div className="h-24" />
     </form>
   );
 }
+

@@ -254,16 +254,21 @@ export function FieldDetailsForm({ field, selectedSports }: FieldDetailsFormProp
         </Card>
       </div>
 
-      <div className="flex justify-end pt-4">
-        <Button
-          type="submit"
-          className="btn-primary w-full md:w-auto px-12 gap-2"
-          disabled={isPending}
-        >
-          {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-          Enregistrer les modifications
-        </Button>
+      <div className="fixed bottom-0 left-0 right-0 sm:bottom-8 sm:right-8 sm:left-auto z-50 animate-in fade-in slide-in-from-bottom-6 duration-500">
+        <div className="bg-card/95 backdrop-blur-xl border-t sm:border border-border/40 sm:border-violet-principal/20 sm:rounded-2xl p-4 sm:p-3 shadow-[0_-8px_30px_rgb(0,0,0,0.08)] sm:shadow-2xl flex items-center justify-center sm:justify-end gap-4">
+          <Button
+            type="submit"
+            className="btn-primary w-full sm:min-w-[200px] gap-2 shadow-lg"
+            disabled={isPending}
+          >
+            {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+            Enregistrer les modifications
+          </Button>
+        </div>
       </div>
+
+      {/* Spacer to prevent content from being hidden behind the fixed bar */}
+      <div className="h-24" />
     </form>
   );
 }
