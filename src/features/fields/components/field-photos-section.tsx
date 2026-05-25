@@ -93,7 +93,7 @@ export function FieldPhotosSection({ initialImages, onChange }: FieldPhotosSecti
     const newPhotos: PhotoState[] = filesToAdd.map((file, i) => ({
       url: URL.createObjectURL(file),
       file: file,
-      status: ImageFieldAdminDtoStatus.PENDING,
+      status: ImageFieldAdminDtoStatus.APPROVED,
       order: activePhotos.length + i,
       isNew: true,
       isDeleted: false,

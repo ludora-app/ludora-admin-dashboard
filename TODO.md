@@ -1,3 +1,4 @@
+- layout /field/[id] + bouton enregistrer en overlay
 - redirection sur /login si page inconnue + non auth, si page inconnue + auth -> /dashboard
-- audit sécurité
 - fix UI navbar
+- audit sécurité
