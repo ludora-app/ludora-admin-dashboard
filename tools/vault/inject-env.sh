@@ -1,17 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Si on est sur Vercel, on saute l'étape Vault car les variables sont déjà injectées
-if [ "${VERCEL:-}" = "1" ] || [ "${VERCEL:-}" = "true" ]; then
-  if [ $# -eq 0 ]; then
-    echo "⚠️ Aucune commande passée à inject-env.sh."
-    echo "   Exemple : bash ./tools/vault/inject-env.sh pnpm run dev"
-    exit 1
-  fi
-  exec "$@"
-fi
-
-# 1. Charger .env.development s'il existe
+# 1. Charger .env.development s'il existe (local uniquement)
 if [ -f .env.development ]; then
   set -a
   . ./.env.development
@@ -39,22 +29,45 @@ fi
 
 export VAULT_TOKEN
 
-# 4. Récupérer un env complet via envconsul (mais sans lancer la commande)
-VAULT_ENV="$(envconsul -config=./tools/vault/envconsul.hcl -once -- env)"
+# 4. Déterminer le chemin du secret (avec fallback sur localhost par défaut)
+SECRET_PATH="${VAULT_SECRET_PATH:-secret/ludora/admin-dashboard/localhost}"
 
-# 5. Exporter ces variables dans le shell actuel
-while IFS='=' read -r name value; do
-  [ -z "$name" ] && continue
-  export "$name=$value"
-done <<< "$VAULT_ENV"
+# 5. Récupérer les secrets via l'API REST de Vault
+SECRETS_RESPONSE=$(curl -s -H "X-Vault-Token: $VAULT_TOKEN" "$VAULT_ADDR/v1/$SECRET_PATH")
 
-# 6. Vérifier qu'on a bien une commande à exécuter
+# Vérifier si la réponse contient "errors"
+if echo "$SECRETS_RESPONSE" | grep -q '"errors"'; then
+  echo "❌ Erreur lors de la récupération des secrets pour le chemin : $SECRET_PATH"
+  echo "   Réponse : $SECRETS_RESPONSE"
+  exit 1
+fi
+
+# 6. Exporter ces variables dans le shell actuel via Node.js
+# Utilisation de Node.js car il est disponible sur Vercel et en local (sans dépendre de jq ni d'envconsul)
+export_script='
+  try {
+    const json = JSON.parse(process.argv[1]);
+    const data = json.data;
+    if (!data) process.exit(0);
+    // Support KV V2 (data contient un sous-objet data) ou KV V1
+    const secrets = data.data || data;
+    for (const [k, v] of Object.entries(secrets)) {
+      console.log(`export ${k}="${v}"`);
+    }
+  } catch (e) {
+    console.error("❌ Erreur de parsing JSON", e);
+    process.exit(1);
+  }
+'
+eval "$(node -e "$export_script" "$SECRETS_RESPONSE")"
+
+# 7. Vérifier qu'on a bien une commande à exécuter
 if [ $# -eq 0 ]; then
   echo "⚠️ Aucune commande passée à inject-env.sh."
   echo "   Exemple : bash ./tools/vault/inject-env.sh pnpm run dev"
   exit 1
 fi
 
-# 7. Exécuter la commande demandée (pnpm, node, etc.)
+# 8. Exécuter la commande demandée (pnpm, node, etc.)
 exec "$@"
 
