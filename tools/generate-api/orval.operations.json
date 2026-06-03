@@ -83,19 +83,7 @@
       "useInfiniteQueryParam": "cursor"
     }
   },
-  "SessionPlayersController_suggestPlayerFromPreviousSessions": {
-    "query": {
-      "useInfinite": true,
-      "useInfiniteQueryParam": "cursor"
-    }
-  },
   "NotificationsController_findAll": {
-    "query": {
-      "useInfinite": true,
-      "useInfiniteQueryParam": "cursor"
-    }
-  },
-  "GeolocalisationController_getAddressAutocomplete": {
     "query": {
       "useInfinite": true,
       "useInfiniteQueryParam": "cursor"

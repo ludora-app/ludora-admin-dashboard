@@ -69,14 +69,28 @@ const env = process.env.NODE_ENV || "production";
       }
     }
 
+    const fallbackSwaggerFile = path.resolve(process.cwd(), "tools/generate-api/swagger.json");
+
     if (localFile && fs.existsSync(localFile)) {
       console.log("📄 Using local Swagger file:", localFile);
       const fileContent = fs.readFileSync(localFile, "utf8");
       swagger = JSON.parse(fileContent);
     } else {
-      console.log("📥 Downloading Swagger from:", SWAGGER_URL);
-      const res = await ky.get(SWAGGER_URL);
-      swagger = await res.json();
+      try {
+        console.log("📥 Downloading Swagger from:", SWAGGER_URL);
+        const res = await ky.get(SWAGGER_URL);
+        swagger = await res.json();
+      } catch (downloadError) {
+        if (fs.existsSync(fallbackSwaggerFile)) {
+          console.warn(
+            `⚠️ Download failed (${downloadError.message}). Falling back to existing swagger.json.`,
+          );
+          const fileContent = fs.readFileSync(fallbackSwaggerFile, "utf8");
+          swagger = JSON.parse(fileContent);
+        } else {
+          throw downloadError;
+        }
+      }
     }
 
     // Collecter tous les tags utilisés dans les opérations

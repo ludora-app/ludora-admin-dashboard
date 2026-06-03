@@ -1,0 +1,224 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, staging, develop]
+
+jobs:
+  # ==========================================
+  # 1. GÉNÉRATION API, VALIDATION, RELEASE & BUILD
+  # ==========================================
+  release:
+    name: 🚀 Generate, Validate & Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache Bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🔐 Install HashiCorp envconsul
+        run: |
+          sudo apt-get update && sudo apt-get install -y unzip
+          wget https://releases.hashicorp.com/envconsul/0.13.4/envconsul_0.13.4_linux_amd64.zip
+          unzip envconsul_0.13.4_linux_amd64.zip
+          sudo mv envconsul /usr/local/bin/
+
+      - name: 📥 Download Swagger from Backend
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          REPO_BRANCH="${{ github.ref_name }}"
+          if [ "$REPO_BRANCH" == "develop" ] || [ "$REPO_BRANCH" == "staging" ]; then
+            REPO_BRANCH="dev"
+          fi
+
+          echo "🔍 Searching for Swagger artifact on backend branch: $REPO_BRANCH"
+
+          # 1. On récupère le dernier run ID sur la branche (permet de récupérer l'artefact même si le run a échoué plus tard)
+          RUN_ID=$(gh run list --repo ludora-app/ludora-back --workflow "CI/CD Pipeline" --branch "$REPO_BRANCH" --limit 1 --json databaseId --jq ".[0].databaseId")
+
+          if [ -n "$RUN_ID" ] && [ "$RUN_ID" != "null" ]; then
+            echo "📡 Downloading artifact from run ID: $RUN_ID"
+            mkdir -p .artifacts
+            gh run download "$RUN_ID" --repo ludora-app/ludora-back \
+              --pattern "swagger-*" \
+              --dir .artifacts
+          else
+            echo "⚠️ No run found on branch $REPO_BRANCH"
+          fi
+
+          # Locate the actual swagger.json file
+          SWAGGER_PATH=$(find .artifacts -name "swagger.json" | head -n 1)
+          if [ -n "$SWAGGER_PATH" ]; then
+            mv "$SWAGGER_PATH" ./swagger-backend.json
+            echo "✅ Swagger.json found and moved to ./swagger-backend.json"
+            echo "HAS_LOCAL_SWAGGER=true" >> $GITHUB_ENV
+          else
+            echo "❌ No swagger.json found, skipping local file usage."
+            echo "HAS_LOCAL_SWAGGER=false" >> $GITHUB_ENV
+          fi
+
+      - name: 🎨 Generate API Hooks (with Vault)
+        run: |
+          if [ "$HAS_LOCAL_SWAGGER" == "true" ]; then
+            export SWAGGER_FILE="./swagger-backend.json"
+          fi
+          bun run generate:api
+        env:
+          VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+          VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
+          VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}
+          EXPO_PUBLIC_API_ENV: ${{ secrets.EXPO_PUBLIC_API_ENV }}
+
+      - name: 🌐 Generate Translations (with Vault)
+        run: bun run generate:translations:local
+        env:
+          VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+          VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
+          VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}
+          EXPO_PUBLIC_API_ENV: ${{ secrets.EXPO_PUBLIC_API_ENV }}
+
+      - name: 🖼️ Generate Icons
+        run: bun run generate:icons
+
+      - name: 🛠️ Run checks (Lint & Type Check)
+        run: bun run check:all
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: 🚀 Run Semantic Release
+        id: semantic
+        run: |
+          OLD_VERSION=$(node -p "require('./package.json').version")
+          bun run release
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          if [ "$OLD_VERSION" != "$NEW_VERSION" ]; then
+            echo "new_release=true" >> $GITHUB_OUTPUT
+            echo "✅ New version detected: $NEW_VERSION"
+          else
+            echo "new_release=false" >> $GITHUB_OUTPUT
+            echo "⏭️ No new version detected"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: 🔍 Check versions before build
+        if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging') && github.event_name == 'push'
+        run: |
+          echo "Package version: $(node -p "require('./package.json').version")"
+          echo "Expo version: $(node -p "require('./app.json').expo.version")"
+
+      - name: 🏗️ Setup Expo / EAS
+        if: steps.semantic.outputs.new_release == 'true' && github.event_name == 'push' && ((github.ref == 'refs/heads/main' && vars.ENABLE_EXPO_BUILD_PROD == 'true') || (github.ref == 'refs/heads/staging' && vars.ENABLE_EXPO_BUILD_PREVIEW == 'true'))
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Build Android Production (EAS)
+        if: vars.ENABLE_EXPO_BUILD_PROD == 'true' && steps.semantic.outputs.new_release == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: bun run build:android:prod --non-interactive --no-wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+          VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
+          VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}
+          EXPO_PUBLIC_API_ENV: ${{ secrets.EXPO_PUBLIC_API_ENV }}
+
+      - name: 🍎 Build iOS Production (EAS)
+        if: vars.ENABLE_EXPO_BUILD_PROD == 'true' && steps.semantic.outputs.new_release == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: bun run build:ios:prod --non-interactive --no-wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+          VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
+          VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}
+          EXPO_PUBLIC_API_ENV: ${{ secrets.EXPO_PUBLIC_API_ENV }}
+
+      - name: 📦 Build Android Preview (EAS - staging)
+        if: vars.ENABLE_EXPO_BUILD_PREVIEW == 'true' && steps.semantic.outputs.new_release == 'true' && github.ref == 'refs/heads/staging' && github.event_name == 'push'
+        run: bun run build:android:preview --non-interactive --no-wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+          VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
+          VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}
+          EXPO_PUBLIC_API_ENV: ${{ secrets.EXPO_PUBLIC_API_ENV }}
+
+      - name: 🍎 Build iOS Preview (EAS - staging)
+        if: vars.ENABLE_EXPO_BUILD_PREVIEW == 'true' && steps.semantic.outputs.new_release == 'true' && github.ref == 'refs/heads/staging' && github.event_name == 'push'
+        run: bun run build:ios:preview --non-interactive --no-wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+          VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
+          VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}
+          EXPO_PUBLIC_API_ENV: ${{ secrets.EXPO_PUBLIC_API_ENV }}
+
+  # ==========================================
+  # 2. SYNCHRONISATION DES BRANCHES (Force Sync)
+  # ==========================================
+  sync-branches:
+    name: 🔄 Sync main -> staging -> develop
+    runs-on: ubuntu-latest
+    needs: [release]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: 🔄 Sync staging with main
+        run: |
+          git fetch origin main staging
+          git checkout staging
+          git merge origin/main -m "chore: sync main into staging [skip ci]"
+          git push origin staging
+          echo "✅ Merged main into staging [skip ci]"
+
+      - name: 🔄 Sync develop with staging
+        run: |
+          git fetch origin staging develop
+          git checkout develop
+          git merge origin/staging -m "chore: sync staging into develop [skip ci]"
+          git push origin develop
+          echo "✅ Merged staging into develop [skip ci]"

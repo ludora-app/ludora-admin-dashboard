@@ -1,0 +1,100 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, staging, dev]
+  pull_request:
+    branches: [main, staging, dev]
+
+jobs:
+  api-gen-and-build:
+    name: 🚀 Generate API & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔐 Install HashiCorp envconsul
+        run: |
+          sudo apt-get update && sudo apt-get install -y unzip
+          wget https://releases.hashicorp.com/envconsul/0.13.4/envconsul_0.13.4_linux_amd64.zip
+          unzip envconsul_0.13.4_linux_amd64.zip
+          sudo mv envconsul /usr/local/bin/
+
+      - name: 📥 Download Swagger from Backend
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          # Branch Mapping: frontend dev -> backend dev
+          REPO_BRANCH="${{ github.ref_name }}"
+          if [ "$REPO_BRANCH" == "dev" ]; then
+            REPO_BRANCH="dev"
+          elif [ "$REPO_BRANCH" == "staging" ]; then
+            REPO_BRANCH="staging"
+          else
+            REPO_BRANCH="main"
+          fi
+
+          echo "🔍 Searching for Swagger artifact on backend branch: $REPO_BRANCH"
+
+          # 1. On récupère le dernier run ID sur la branche
+          RUN_ID=$(gh run list --repo ludora-app/ludora-back --workflow "CI/CD Pipeline" --branch "$REPO_BRANCH" --limit 1 --json databaseId --jq ".[0].databaseId")
+
+          if [ -n "$RUN_ID" ] && [ "$RUN_ID" != "null" ]; then
+            echo "📡 Downloading artifact from run ID: $RUN_ID"
+            mkdir -p .artifacts
+            gh run download "$RUN_ID" --repo ludora-app/ludora-back \
+              --pattern "swagger-*" \
+              --dir .artifacts
+          else
+            echo "⚠️ No run found on branch $REPO_BRANCH"
+          fi
+
+          # Locate the actual swagger.json file
+          SWAGGER_PATH=$(find .artifacts -name "swagger.json" | head -n 1)
+          if [ -n "$SWAGGER_PATH" ]; then
+            mv "$SWAGGER_PATH" ./swagger-backend.json
+            echo "✅ Swagger.json found and moved to ./swagger-backend.json"
+            echo "HAS_LOCAL_SWAGGER=true" >> $GITHUB_ENV
+          else
+            echo "❌ No swagger.json found, skipping local file usage."
+            echo "HAS_LOCAL_SWAGGER=false" >> $GITHUB_ENV
+          fi
+
+      - name: 🎨 Generate API Hooks (with Vault)
+        run: |
+          if [ "$HAS_LOCAL_SWAGGER" == "true" ]; then
+            export SWAGGER_FILE="./swagger-backend.json"
+          fi
+          pnpm generate:api
+        env:
+          VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+          VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
+          VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}
+
+      - name: 🛠️ Run checks (Lint)
+        run: pnpm lint
+
+      - name: 🏗️ Build
+        run: pnpm build
+        env:
+          VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+          VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
+          VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}

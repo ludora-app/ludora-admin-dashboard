@@ -24,13 +24,25 @@ export default async function getOrvalOperations() {
       if (operationId) {
         console.log(`📍 Found operation: "${operationId}" at path "${path}"`);
         if (PAGINATION_KEYWORDS.some((keyword) => path.includes(keyword))) {
-          console.log(`🔁 Route "${operationId}" marked as infinite query`);
-          operations[operationId] = {
-            query: {
-              useInfinite: true,
-              useInfiniteQueryParam: "cursor",
-            },
-          };
+          const hasCursor =
+            (operation.parameters || []).some((p) => p.name === "cursor" && p.in === "query") ||
+            (swagger.paths[path].parameters || []).some(
+              (p) => p.name === "cursor" && p.in === "query",
+            );
+
+          if (hasCursor) {
+            console.log(`🔁 Route "${operationId}" marked as infinite query`);
+            operations[operationId] = {
+              query: {
+                useInfinite: true,
+                useInfiniteQueryParam: "cursor",
+              },
+            };
+          } else {
+            console.log(
+              `ℹ️ Route "${operationId}" has no "cursor" parameter, skipping infinite query`,
+            );
+          }
         }
       }
     }
