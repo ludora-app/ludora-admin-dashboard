@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Si on est sur Vercel, on saute l'étape Vault car les variables sont déjà injectées
+if [ "${VERCEL:-}" = "1" ] || [ "${VERCEL:-}" = "true" ]; then
+  if [ $# -eq 0 ]; then
+    echo "⚠️ Aucune commande passée à inject-env.sh."
+    echo "   Exemple : bash ./tools/vault/inject-env.sh pnpm run dev"
+    exit 1
+  fi
+  exec "$@"
+fi
+
 # 1. Charger .env.development s'il existe
 if [ -f .env.development ]; then
   set -a
