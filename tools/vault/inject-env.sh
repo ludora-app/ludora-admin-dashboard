@@ -38,9 +38,10 @@ if [ "${VERCEL:-}" = "1" ] || [ "${VERCEL:-}" = "true" ] || [ "${CI:-}" = "true"
   ENV_NAME="${NODE_ENV:-development}"
   if [ "$ENV_NAME" = "development" ]; then
     DEFAULT_SECRET_PATH="$SECRET_ROOT/dev"
-  elif [ "$ENV_NAME" = "production" ]; then
+  elif [ "$ENV_NAME" = "production" ] || [ "$ENV_NAME" = "main" ]; then
     DEFAULT_SECRET_PATH="$SECRET_ROOT/prod"
   else
+    # Pour les branches feature/staging, on utilise le nom brut (ex: "staging", "dev")
     DEFAULT_SECRET_PATH="$SECRET_ROOT/$ENV_NAME"
   fi
 else
