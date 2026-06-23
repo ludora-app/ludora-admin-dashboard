@@ -5,7 +5,7 @@ import zlib from "node:zlib";
 import ky from "ky";
 import { getApiUrl } from "./api-url.mjs";
 
-const SWAGGER_URL = `${getApiUrl()}/swagger-json`;
+const SWAGGER_URL = `${getApiUrl()}/swagger`;
 const env = process.env.NODE_ENV || "production";
 const BACKEND_REPO = "ludora-app/ludora-back";
 
