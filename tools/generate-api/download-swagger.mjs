@@ -4,7 +4,7 @@ import path from "node:path";
 import ky from "ky";
 import { getApiUrl } from "./api-url.mjs";
 
-const SWAGGER_URL = `${getApiUrl()}/swagger-json`;
+const SWAGGER_URL = `${getApiUrl()}/swagger`;
 const env = process.env.NODE_ENV || "production";
 
 (async () => {
