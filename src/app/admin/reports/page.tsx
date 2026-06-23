@@ -76,15 +76,16 @@ export default function ReportsPage() {
         setBanError(null);
       },
       onError: (err: any) => {
-        const errorMsg =
-          err?.response?.data?.message || err?.message || "Échec du bannissement.";
+        const errorMsg = err?.response?.data?.message || err?.message || "Échec du bannissement.";
         setBanError(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
       },
     },
   });
 
   // Reset pagination when filter changes
-  const handleFilterChange = (reason: UsersAdminFindAllUsersOrderedByReportsReportReason | undefined) => {
+  const handleFilterChange = (
+    reason: UsersAdminFindAllUsersOrderedByReportsReportReason | undefined,
+  ) => {
     setReportReason(reason);
     setCursorHistory([undefined]);
     setCurrentPageIndex(0);
@@ -192,11 +193,7 @@ export default function ReportsPage() {
             </div>
           </div>
           <div className="text-3xl font-black text-text-primary">
-            {isLoading ? (
-              <Skeleton className="h-9 w-20" />
-            ) : (
-              cumulativeReports.toLocaleString()
-            )}
+            {isLoading ? <Skeleton className="h-9 w-20" /> : cumulativeReports.toLocaleString()}
           </div>
           <p className="text-xs text-text-secondary mt-1 font-medium">
             Cumulés sur la page actuelle
@@ -235,9 +232,10 @@ export default function ReportsPage() {
           Tous les motifs
         </button>
         {Object.keys(UsersAdminFindAllUsersOrderedByReportsReportReason).map((key) => {
-          const reason = UsersAdminFindAllUsersOrderedByReportsReportReason[
-            key as keyof typeof UsersAdminFindAllUsersOrderedByReportsReportReason
-          ];
+          const reason =
+            UsersAdminFindAllUsersOrderedByReportsReportReason[
+              key as keyof typeof UsersAdminFindAllUsersOrderedByReportsReportReason
+            ];
           const isActive = reportReason === reason;
           return (
             <button
@@ -370,9 +368,7 @@ export default function ReportsPage() {
             </div>
 
             <div>
-              <h3 className="text-lg font-bold text-text-primary mb-1">
-                Bannir l'utilisateur ?
-              </h3>
+              <h3 className="text-lg font-bold text-text-primary mb-1">Bannir l'utilisateur ?</h3>
               <p className="text-sm text-text-secondary font-medium">
                 Vous êtes sur le point de bannir définitivement{" "}
                 <span className="font-bold text-text-primary">
@@ -384,7 +380,10 @@ export default function ReportsPage() {
 
             {/* Select Reason */}
             <div className="space-y-1.5">
-              <label htmlFor="ban-reason" className="text-xs font-bold text-text-secondary uppercase tracking-wider">
+              <label
+                htmlFor="ban-reason"
+                className="text-xs font-bold text-text-secondary uppercase tracking-wider"
+              >
                 Motif du bannissement
               </label>
               <select
@@ -394,9 +393,10 @@ export default function ReportsPage() {
                 onChange={(e) => setBanReason(e.target.value as CreateUserBanParamDtoBanReason)}
               >
                 {Object.keys(CreateUserBanParamDtoBanReason).map((key) => {
-                  const val = CreateUserBanParamDtoBanReason[
-                    key as keyof typeof CreateUserBanParamDtoBanReason
-                  ];
+                  const val =
+                    CreateUserBanParamDtoBanReason[
+                      key as keyof typeof CreateUserBanParamDtoBanReason
+                    ];
                   return (
                     <option key={val} value={val}>
                       {val}
