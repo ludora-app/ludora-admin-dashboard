@@ -4,7 +4,7 @@ import path from "node:path";
 import ky from "ky";
 import { getApiUrl } from "./api-url.mjs";
 
-const SWAGGER_URL = `${getApiUrl()}/swagger`;
+const SWAGGER_URL = `${getApiUrl()}/swagger-json`;
 // NODE_ENV is always forced to "production" by Next.js/Vercel during build.
 // Use APP_ENV (manually set in Vercel env vars) or fall back to VERCEL_GIT_COMMIT_REF
 // to determine the actual target environment.
