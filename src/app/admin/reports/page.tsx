@@ -283,7 +283,7 @@ export default function ReportsPage() {
             Échec du chargement des signalements
           </h3>
           <p className="text-text-secondary mb-6">
-            {(error as Error | null)?.message || "Une erreur inattendue est survenue lors de l'appel API."}
+            {(error as unknown as Error | null)?.message || "Une erreur inattendue est survenue lors de l'appel API."}
           </p>
           <Button onClick={() => refetch()} className="btn-primary">
             Réessayer
