@@ -94,5 +94,11 @@
       "useInfinite": true,
       "useInfiniteQueryParam": "cursor"
     }
+  },
+  "UsersAdminController_findAllUsersOrderedByReports": {
+    "query": {
+      "useInfinite": true,
+      "useInfiniteQueryParam": "cursor"
+    }
   }
 }
