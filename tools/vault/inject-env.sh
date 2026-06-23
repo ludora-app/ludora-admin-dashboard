@@ -34,13 +34,17 @@ export VAULT_TOKEN
 SECRET_ROOT="${VAULT_SECRET_ROOT:-secret/ludora/admin-dashboard}"
 
 if [ "${VERCEL:-}" = "1" ] || [ "${VERCEL:-}" = "true" ]; then
-  # Sur Vercel, on utilise NODE_ENV pour déterminer le chemin
-  ENV_NAME="${NODE_ENV:-development}"
-  if [ "$ENV_NAME" = "development" ]; then
+  # NOTE: NODE_ENV est TOUJOURS forcé à "production" par Next.js/Vercel lors du build.
+  # On utilise APP_ENV en priorité, puis VERCEL_GIT_COMMIT_REF (nom de branche) comme fallback automatique.
+  GIT_BRANCH="${VERCEL_GIT_COMMIT_REF:-}"
+  ENV_NAME="${APP_ENV:-${GIT_BRANCH:-production}}"
+
+  if [ "$ENV_NAME" = "development" ] || [ "$ENV_NAME" = "dev" ]; then
     DEFAULT_SECRET_PATH="$SECRET_ROOT/dev"
-  elif [ "$ENV_NAME" = "production" ]; then
+  elif [ "$ENV_NAME" = "production" ] || [ "$ENV_NAME" = "main" ]; then
     DEFAULT_SECRET_PATH="$SECRET_ROOT/prod"
   else
+    # Pour les branches feature/staging, on utilise le nom brut (ex: "staging", "dev")
     DEFAULT_SECRET_PATH="$SECRET_ROOT/$ENV_NAME"
   fi
 else

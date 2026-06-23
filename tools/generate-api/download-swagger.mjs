@@ -5,7 +5,11 @@ import ky from "ky";
 import { getApiUrl } from "./api-url.mjs";
 
 const SWAGGER_URL = `${getApiUrl()}/swagger`;
-const env = process.env.NODE_ENV || "production";
+// NODE_ENV is always forced to "production" by Next.js/Vercel during build.
+// Use APP_ENV (manually set in Vercel env vars) or fall back to VERCEL_GIT_COMMIT_REF
+// to determine the actual target environment.
+const gitBranch = process.env.VERCEL_GIT_COMMIT_REF || "";
+const env = process.env.APP_ENV || gitBranch || "production";
 
 (async () => {
   try {
@@ -15,9 +19,12 @@ const env = process.env.NODE_ENV || "production";
     if (env !== "localhost" && !localFile) {
       console.log(`🌐 Env is "${env}", trying to fetch artifact from GitHub...`);
 
+      // Determine the backend branch based on APP_ENV or the git branch name directly
       let branchName = "main";
-      if (env === "development") branchName = "dev";
-      if (env === "preview" || env === "staging") branchName = "staging";
+      if (env === "development" || env === "dev") branchName = "dev";
+      else if (env === "preview" || env === "staging") branchName = "staging";
+      // If env looks like a raw git branch name, use it directly
+      else if (!["production", "main"].includes(env)) branchName = env;
 
       try {
         const tempDir = path.resolve(process.cwd(), ".artifacts");
