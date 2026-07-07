@@ -42,6 +42,12 @@ export function ReportDetailsModal({
     },
   });
 
+  const [imgError, setImgError] = React.useState(false);
+
+  React.useEffect(() => {
+    setImgError(false);
+  }, [selectedUserUid]);
+
   const getInitials = (firstname: string, lastname: string) => {
     const f = firstname?.charAt(0) || "";
     const l = lastname?.charAt(0) || "";
@@ -96,13 +102,14 @@ export function ReportDetailsModal({
             {/* User overview block */}
             <div className="bg-surface-secondary/40 p-4 rounded-card border border-secondary flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                {userData.imageUrl ? (
+                {userData.imageUrl && !imgError ? (
                   <Image
                     src={userData.imageUrl}
                     alt="Utilisateur"
                     width={48}
                     height={48}
                     unoptimized
+                    onError={() => setImgError(true)}
                     className="size-12 rounded-full object-cover"
                   />
                 ) : (

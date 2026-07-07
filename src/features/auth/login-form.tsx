@@ -131,7 +131,7 @@ export function LoginForm() {
           )}
         </CardContent>
         <CardFooter>
-          <Button type="submit" className="w-full" disabled={isPending}>
+          <Button type="submit" className="w-full mb-2" disabled={isPending}>
             {isPending ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />

@@ -22,16 +22,16 @@ import { useAuthStore } from "@/services/auth-store";
 
 const data = {
   navMain: [
-    {
-      title: "Vue d'ensemble",
-      url: "/admin/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      title: "Utilisateurs",
-      url: "/admin/users",
-      icon: Users,
-    },
+    // {
+    //   title: "Vue d'ensemble",
+    //   url: "/admin/dashboard",
+    //   icon: LayoutDashboard,
+    // },
+    // {
+    //   title: "Utilisateurs",
+    //   url: "/admin/users",
+    //   icon: Users,
+    // },
     {
       title: "Terrains",
       url: "/admin/fields",
@@ -47,11 +47,11 @@ const data = {
         },
       ],
     },
-    {
-      title: "Sessions",
-      url: "/admin/sessions",
-      icon: Calendar,
-    },
+    // {
+    //   title: "Sessions",
+    //   url: "/admin/sessions",
+    //   icon: Calendar,
+    // },
     {
       title: "Signalements",
       url: "/admin/reports",
