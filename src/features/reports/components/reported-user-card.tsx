@@ -56,7 +56,9 @@ export function ReportedUserCard({ user, onOpenDetails, onInitiateBan }: Reporte
                 {user.firstname} {user.lastname}
               </h3>
               {user.isEmailVerified && (
-                <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" title="Email vérifié" />
+                <span title="Email vérifié" className="shrink-0">
+                  <CheckCircle className="h-4 w-4 text-emerald-600" aria-label="Email vérifié" />
+                </span>
               )}
             </div>
             <p className="text-xs text-text-muted font-medium truncate mb-2">

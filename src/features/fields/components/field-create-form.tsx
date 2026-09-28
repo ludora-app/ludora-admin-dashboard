@@ -18,7 +18,7 @@ import { FieldPhotosSection, type PhotoState } from "./field-photos-section";
 const fieldCreateSchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
   address: z.string().min(5, "L'adresse est trop courte"),
-  shortAddress: z.string().optional(),
+  shortAddress: z.string().min(1, "Sélectionnez une adresse pour remplir l'adresse courte"),
   latitude: z.number({ required_error: "La latitude est requise" }),
   longitude: z.number({ required_error: "La longitude est requise" }),
 });
@@ -160,6 +160,9 @@ export function FieldCreateForm({ selectedSports }: FieldCreateFormProps) {
                 className="bg-surface-secondary/50"
                 readOnly
               />
+              {errors.shortAddress && (
+                <p className="text-xs text-destructive">{errors.shortAddress.message}</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="latitude">Latitude</Label>
