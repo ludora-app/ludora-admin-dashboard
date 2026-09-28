@@ -53,17 +53,23 @@ jobs:
 
           echo "🔍 Searching for Swagger artifact on backend branch: $REPO_BRANCH"
 
-          # 1. On récupère le dernier run ID sur la branche
-          RUN_ID=$(gh run list --repo ludora-app/ludora-back --workflow "CI/CD Pipeline" --branch "$REPO_BRANCH" --limit 1 --json databaseId --jq ".[0].databaseId")
+          # 1. On parcourt les derniers runs réussis sur la branche jusqu'à trouver un artifact swagger
+          #    (le dernier run peut être en cours, échoué, ou avoir un artifact expiré)
+          RUN_IDS=$(gh run list --repo ludora-app/ludora-back --workflow "CI/CD Pipeline" --branch "$REPO_BRANCH" --status success --limit 10 --json databaseId --jq ".[].databaseId")
 
-          if [ -n "$RUN_ID" ] && [ "$RUN_ID" != "null" ]; then
-            echo "📡 Downloading artifact from run ID: $RUN_ID"
-            mkdir -p .artifacts
-            gh run download "$RUN_ID" --repo ludora-app/ludora-back \
+          mkdir -p .artifacts
+          for RUN_ID in $RUN_IDS; do
+            echo "📡 Trying to download artifact from run ID: $RUN_ID"
+            if gh run download "$RUN_ID" --repo ludora-app/ludora-back \
               --pattern "swagger-*" \
-              --dir .artifacts
-          else
-            echo "⚠️ No run found on branch $REPO_BRANCH"
+              --dir .artifacts; then
+              echo "✅ Artifact downloaded from run ID: $RUN_ID"
+              break
+            fi
+          done
+
+          if [ -z "$RUN_IDS" ]; then
+            echo "⚠️ No successful run found on branch $REPO_BRANCH"
           fi
 
           # Locate the actual swagger.json file
@@ -84,6 +90,7 @@ jobs:
           fi
           pnpm generate:api
         env:
+          NODE_ENV: ${{ (github.base_ref || github.ref_name) == 'main' && 'production' || 'development' }}
           VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
           VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
           VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}
@@ -94,6 +101,7 @@ jobs:
       - name: 🏗️ Build
         run: pnpm build
         env:
+          NODE_ENV: ${{ (github.base_ref || github.ref_name) == 'main' && 'production' || 'development' }}
           VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
           VAULT_ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
           VAULT_SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}

@@ -33,8 +33,8 @@ export VAULT_TOKEN
 # La racine peut être définie via VAULT_SECRET_ROOT (pratique pour réutiliser ce script dans d'autres projets)
 SECRET_ROOT="${VAULT_SECRET_ROOT:-secret/ludora/admin-dashboard}"
 
-if [ "${VERCEL:-}" = "1" ] || [ "${VERCEL:-}" = "true" ]; then
-  # Sur Vercel, on utilise NODE_ENV pour déterminer le chemin
+if [ "${VERCEL:-}" = "1" ] || [ "${VERCEL:-}" = "true" ] || [ "${CI:-}" = "true" ]; then
+  # Sur Vercel ou en CI (GitHub Actions définit CI=true), on utilise NODE_ENV pour déterminer le chemin
   ENV_NAME="${NODE_ENV:-development}"
   if [ "$ENV_NAME" = "development" ]; then
     DEFAULT_SECRET_PATH="$SECRET_ROOT/dev"
@@ -56,6 +56,8 @@ SECRETS_RESPONSE=$(curl -s -H "X-Vault-Token: $VAULT_TOKEN" "$VAULT_ADDR/v1/$SEC
 
 # Vérifier si la réponse contient "errors"
 if echo "$SECRETS_RESPONSE" | grep -q '"errors"'; then
+# ! debug
+  echo "ENV_NAME: ${ENV_NAME:-}"
   echo "❌ Erreur lors de la récupération des secrets pour le chemin : $SECRET_PATH"
   echo "   Réponse : $SECRETS_RESPONSE"
   exit 1
