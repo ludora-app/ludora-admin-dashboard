@@ -62,7 +62,7 @@ const env = process.env.NODE_ENV || "production";
           localFile = path.resolve(tempDir, swaggerPath);
           console.log("✅ Found artifact at:", localFile);
         }
-      } catch (err) {
+      } catch {
         console.warn(
           "⚠️ Could not fetch from GitHub (gh cli missing or error). Falling back to HTTP download.",
         );

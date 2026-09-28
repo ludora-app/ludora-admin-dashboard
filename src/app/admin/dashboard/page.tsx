@@ -1,10 +1,7 @@
 "use client";
 
-import { Activity, Calendar, MapPin, Users } from "lucide-react";
 import { ActivityChart } from "@/components/charts/activity-chart";
-import { MetricCard } from "@/components/metric-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { usePrometheusMetric } from "@/hooks/use-prometheus-metrics";
 
 export default function DashboardPage() {

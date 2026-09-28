@@ -170,11 +170,14 @@ export function FieldPhotosSection({ initialImages, onChange }: FieldPhotosSecti
                 {/* Photo Actions */}
                 <div className="p-3 space-y-3">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-text-muted">
+                    <label
+                      htmlFor={`photo-status-${index}`}
+                      className="text-[10px] font-bold uppercase tracking-wider text-text-muted">
                       Statut de vérification
                     </label>
                     <div className="flex items-center gap-2">
                       <select
+                        id={`photo-status-${index}`}
                         className="flex-1 h-8 px-2 rounded-md border border-border bg-background text-[11px] focus:outline-none focus:ring-1 focus:ring-violet-principal"
                         value={photo.status}
                         onChange={(e) => handleStatusChange(index, e.target.value as any)}

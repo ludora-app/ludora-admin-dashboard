@@ -8,11 +8,11 @@ export const customInstance = async <T>(url: string, options?: any): Promise<T> 
   try {
     const response = await kyApi(url, options);
 
-    let data;
+    let data: unknown;
     try {
       const text = await response.text();
       data = text ? JSON.parse(text) : undefined;
-    } catch (err) {
+    } catch {
       data = undefined;
     }
 
@@ -26,7 +26,7 @@ export const customInstance = async <T>(url: string, options?: any): Promise<T> 
       try {
         const text = await error.response.text();
         error.response.data = text ? JSON.parse(text) : undefined;
-      } catch (e) {
+      } catch {
         error.response.data = undefined;
       }
     }

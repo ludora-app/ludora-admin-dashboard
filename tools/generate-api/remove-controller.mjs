@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
 const rootPath = process.cwd();
 const folderPath = path.resolve(rootPath, "src/api/generated"); // 🔁 modifie si besoin

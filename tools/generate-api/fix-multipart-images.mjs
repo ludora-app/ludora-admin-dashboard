@@ -26,7 +26,7 @@ function fixMultipartImages() {
   } else {
     const oldPattern =
       /if\(([^.]+)\.images !== undefined\) \{\s+\1\.images\.forEach\(value => formData\.append\(`images`, JSON\.stringify\(value\)\)\);\s+\}/g;
-    content = content.replace(oldPattern, (match, varName) => {
+    content = content.replace(oldPattern, (_match, varName) => {
       return `if(${varName}.images !== undefined) {
     ${varName}.images.forEach(value => {
       const { file, ...metadata } = value;

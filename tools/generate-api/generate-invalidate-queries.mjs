@@ -1,17 +1,8 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-// Convert tag name to file path format
-const tagToFilePath = (tag) => {
-  return tag
-    .toLowerCase()
-    .replace(/([A-Z])/g, "-$1")
-    .replace(/^-/, "")
-    .replace(/\s+/g, "-");
-};
 
 // Extract all getQueryKey functions from API files
 const extractQueryKeyFunctions = () => {
@@ -38,9 +29,7 @@ const extractQueryKeyFunctions = () => {
 
       // Find all export const get*QueryKey functions with their parameters
       const queryKeyRegex = /export const (get\w+QueryKey)\s*=\s*\(([^)]*)\)/g;
-      let match;
-
-      while ((match = queryKeyRegex.exec(content)) !== null) {
+      for (const match of content.matchAll(queryKeyRegex)) {
         const functionName = match[1];
         const paramsStr = match[2].trim();
 
