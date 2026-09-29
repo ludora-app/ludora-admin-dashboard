@@ -75,14 +75,16 @@ jobs:
             echo "⚠️ No run found on branch $REPO_BRANCH"
           fi
 
-          # Locate the actual swagger.json file
-          SWAGGER_PATH=$(find .artifacts -name "swagger.json" | head -n 1)
+          # Locate the actual swagger-admin.json (spec admin) file
+          SWAGGER_PATH=$(find .artifacts -name "swagger-admin.json" | head -n 1)
+          # Repli sur l'alias déprécié tant que l'artifact backend ne publie pas swagger-admin.json
+          [ -z "$SWAGGER_PATH" ] && SWAGGER_PATH=$(find .artifacts -name "swagger.json" | head -n 1)
           if [ -n "$SWAGGER_PATH" ]; then
             mv "$SWAGGER_PATH" ./swagger-backend.json
-            echo "✅ Swagger.json found and moved to ./swagger-backend.json"
+            echo "✅ swagger-admin.json found and moved to ./swagger-backend.json"
             echo "HAS_LOCAL_SWAGGER=true" >> $GITHUB_ENV
           else
-            echo "❌ No swagger.json found, skipping local file usage."
+            echo "❌ No swagger-admin.json found, skipping local file usage."
             echo "HAS_LOCAL_SWAGGER=false" >> $GITHUB_ENV
           fi
 

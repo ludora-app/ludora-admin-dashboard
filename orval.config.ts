@@ -16,7 +16,7 @@ module.exports = {
       afterAllFilesWrite: "pnpm biome format --write",
     },
     input: {
-      target: "./tools/generate-api/swagger.json",
+      target: "./tools/generate-api/swagger-admin.json",
     },
     output: {
       clean: true,

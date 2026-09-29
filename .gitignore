@@ -42,5 +42,5 @@ yarn-error.log*
 next-env.d.ts
 
 /src/api/generated
-/tools/generate-api/swagger.json
+/tools/generate-api/swagger-admin.json
 /.artifacts

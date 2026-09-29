@@ -1,45 +1,51 @@
-import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
 import ky from "ky";
 import { getApiUrl } from "./api-url.mjs";
 
-const SWAGGER_URL = `${getApiUrl()}/swagger`;
+const SWAGGER_URL = `${getApiUrl()}/swagger-admin-json`;
 const env = process.env.NODE_ENV || "production";
 const BACKEND_REPO = "ludora-app/ludora-back";
+// Spec admin ; swagger.json est l'alias déprécié, gardé en repli tant que tous les artifacts backend ne publient pas swagger-admin.json
+const SWAGGER_FILE_NAMES = ["swagger-admin.json", "swagger.json"];
 
 // Extrait un fichier d'une archive zip (les artifacts GitHub sont des zips)
-const extractFromZip = (zip, fileName) => {
+const extractFromZip = (zip, fileNames) => {
   // Fin du central directory : signature 0x06054b50, cherchée depuis la fin du fichier
   let eocd = zip.length - 22;
   while (eocd >= 0 && zip.readUInt32LE(eocd) !== 0x06054b50) eocd--;
   if (eocd < 0) throw new Error("Invalid zip archive");
 
   const entries = zip.readUInt16LE(eocd + 10);
-  let offset = zip.readUInt32LE(eocd + 16);
 
-  for (let i = 0; i < entries; i++) {
-    const method = zip.readUInt16LE(offset + 10);
-    const compressedSize = zip.readUInt32LE(offset + 20);
-    const nameLength = zip.readUInt16LE(offset + 28);
-    const extraLength = zip.readUInt16LE(offset + 30);
-    const commentLength = zip.readUInt16LE(offset + 32);
-    const localHeader = zip.readUInt32LE(offset + 42);
-    const name = zip.toString("utf8", offset + 46, offset + 46 + nameLength);
+  for (const fileName of fileNames) {
+    let offset = zip.readUInt32LE(eocd + 16);
+    for (let i = 0; i < entries; i++) {
+      const method = zip.readUInt16LE(offset + 10);
+      const compressedSize = zip.readUInt32LE(offset + 20);
+      const nameLength = zip.readUInt16LE(offset + 28);
+      const extraLength = zip.readUInt16LE(offset + 30);
+      const commentLength = zip.readUInt16LE(offset + 32);
+      const localHeader = zip.readUInt32LE(offset + 42);
+      const name = zip.toString("utf8", offset + 46, offset + 46 + nameLength);
 
-    if (name.endsWith(fileName)) {
-      const dataStart =
-        localHeader + 30 + zip.readUInt16LE(localHeader + 26) + zip.readUInt16LE(localHeader + 28);
-      const data = zip.subarray(dataStart, dataStart + compressedSize);
-      return method === 0 ? data : zlib.inflateRawSync(data);
+      if (name === fileName || name.endsWith(`/${fileName}`)) {
+        const dataStart =
+          localHeader +
+          30 +
+          zip.readUInt16LE(localHeader + 26) +
+          zip.readUInt16LE(localHeader + 28);
+        const data = zip.subarray(dataStart, dataStart + compressedSize);
+        return method === 0 ? data : zlib.inflateRawSync(data);
+      }
+      offset += 46 + nameLength + extraLength + commentLength;
     }
-    offset += 46 + nameLength + extraLength + commentLength;
   }
-  throw new Error(`${fileName} not found in zip archive`);
+  throw new Error(`${fileNames.join(" / ")} not found in zip archive`);
 };
 
-// Récupère swagger.json depuis le dernier artifact valide via l'API REST GitHub (sans gh CLI, absent sur Vercel)
+// Récupère swagger-admin.json depuis le dernier artifact valide via l'API REST GitHub (sans gh CLI, absent sur Vercel)
 const fetchSwaggerFromGithubApi = async (branchName, destDir) => {
   const token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
   if (!token) throw new Error("GH_TOKEN is not defined");
@@ -67,8 +73,8 @@ const fetchSwaggerFromGithubApi = async (branchName, destDir) => {
   if (!zipRes.ok) throw new Error(`Artifact download error ${zipRes.status}`);
 
   const zip = Buffer.from(await zipRes.arrayBuffer());
-  const swaggerPath = path.resolve(destDir, "swagger.json");
-  fs.writeFileSync(swaggerPath, extractFromZip(zip, "swagger.json"));
+  const swaggerPath = path.resolve(destDir, "swagger-admin.json");
+  fs.writeFileSync(swaggerPath, extractFromZip(zip, SWAGGER_FILE_NAMES));
   return swaggerPath;
 };
 
@@ -91,7 +97,7 @@ const fetchSwaggerFromGithubApi = async (branchName, destDir) => {
       if (fs.existsSync(tempDir)) fs.rmSync(tempDir, { recursive: true, force: true });
       fs.mkdirSync(tempDir);
 
-      // En prod, /swagger-json n'est pas exposé par l'API : on passe par l'API REST GitHub (gh CLI absent sur Vercel)
+      // En prod, /swagger-admin-json n'est pas exposé par l'API : on passe par l'API REST GitHub (gh CLI absent sur Vercel)
       if ((process.env.VERCEL_GIT_COMMIT_REF || branchName) === "main") {
         console.log('📥 Using GitHub API to find latest swagger artifact on branch "main"...');
         try {
@@ -101,54 +107,28 @@ const fetchSwaggerFromGithubApi = async (branchName, destDir) => {
         }
         console.log("✅ Found artifact at:", localFile);
       } else {
-        try {
-          console.log(`📥 Using GH CLI to find latest run on branch "${branchName}"...`);
-
-          const repo = "ludora-app/ludora-back";
-          const ghEnv = {
-            ...process.env,
-            GH_TOKEN: process.env.GH_TOKEN || process.env.GITHUB_TOKEN,
-          };
-
-          // 1. Récupérer l'ID du dernier run sur la branche (permet de récupérer l'artefact même si le run a échoué plus tard)
-          const runId = execSync(
-            `gh run list --repo ${repo} --branch "${branchName}" --workflow "CI/CD Pipeline" --limit 1 --json databaseId --jq ".[0].databaseId"`,
-            { env: ghEnv },
-          )
-            .toString()
-            .trim();
-
-          if (!runId || runId === "null") {
-            throw new Error(`No runs found on branch ${branchName}`);
-          }
-
-          console.log(`📡 Downloading artifact from run ID: ${runId}`);
-
-          // 2. Télécharger l'artefact du run trouvé
-          execSync(
-            `gh run download ${runId} --repo ${repo} --pattern "swagger-*" --dir "${tempDir}"`,
-            {
-              stdio: "inherit",
-              env: ghEnv,
-            },
-          );
-
-          const files = fs.readdirSync(tempDir, { recursive: true });
-          const swaggerPath = files.find((f) => f.endsWith("swagger.json"));
-
-          if (swaggerPath) {
-            localFile = path.resolve(tempDir, swaggerPath);
+        // Une branche sans artifact backend (ex. branche feature, env "debug") retombe sur dev
+        const candidates = [...new Set([branchName, "dev"])];
+        for (const candidate of candidates) {
+          try {
+            console.log(
+              `📥 Using GitHub API to find latest swagger artifact on branch "${candidate}"...`,
+            );
+            localFile = await fetchSwaggerFromGithubApi(candidate, tempDir);
             console.log("✅ Found artifact at:", localFile);
+            break;
+          } catch (err) {
+            console.warn(`⚠️ Could not fetch artifact for "${candidate}": ${err.message}`);
           }
-        } catch {
-          console.warn(
-            "⚠️ Could not fetch from GitHub (gh cli missing or error). Falling back to HTTP download.",
-          );
         }
+        if (!localFile) console.warn("⚠️ No GitHub artifact found. Falling back to HTTP download.");
       }
     }
 
-    const fallbackSwaggerFile = path.resolve(process.cwd(), "tools/generate-api/swagger.json");
+    const fallbackSwaggerFile = path.resolve(
+      process.cwd(),
+      "tools/generate-api/swagger-admin.json",
+    );
 
     if (localFile && fs.existsSync(localFile)) {
       console.log("📄 Using local Swagger file:", localFile);
@@ -162,7 +142,7 @@ const fetchSwaggerFromGithubApi = async (branchName, destDir) => {
       } catch (downloadError) {
         if (fs.existsSync(fallbackSwaggerFile)) {
           console.warn(
-            `⚠️ Download failed (${downloadError.message}). Falling back to existing swagger.json.`,
+            `⚠️ Download failed (${downloadError.message}). Falling back to existing swagger-admin.json.`,
           );
           const fileContent = fs.readFileSync(fallbackSwaggerFile, "utf8");
           swagger = JSON.parse(fileContent);
@@ -201,7 +181,7 @@ const fetchSwaggerFromGithubApi = async (branchName, destDir) => {
 
     // Sauvegarder le Swagger modifié
     const rootPath = process.cwd();
-    const swaggerFile = path.resolve(rootPath, "tools/generate-api/swagger.json");
+    const swaggerFile = path.resolve(rootPath, "tools/generate-api/swagger-admin.json");
     fs.writeFileSync(swaggerFile, JSON.stringify(swagger, null, 2));
 
     console.log("✅ Swagger downloaded and fixed!");

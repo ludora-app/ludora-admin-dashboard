@@ -3,6 +3,7 @@
 import { AlertCircle, Ban, ExternalLink, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import { useUsersAdminFindOneWithReports } from "@/api/generated/api/users-admin/users-admin.api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,11 +42,9 @@ export function ReportDetailsModal({
     },
   });
 
-  const [imgError, setImgError] = React.useState(false);
-
-  React.useEffect(() => {
-    setImgError(false);
-  }, [selectedUserUid]);
+  // Mémorise l'utilisateur dont l'image a échoué : l'erreur se réinitialise d'elle-même au changement d'utilisateur
+  const [imgErrorUid, setImgErrorUid] = useState<string | null>(null);
+  const imgError = imgErrorUid !== null && imgErrorUid === selectedUserUid;
 
   const getInitials = (firstname: string, lastname: string) => {
     const f = firstname?.charAt(0) || "";
@@ -108,7 +107,7 @@ export function ReportDetailsModal({
                     width={48}
                     height={48}
                     unoptimized
-                    onError={() => setImgError(true)}
+                    onError={() => setImgErrorUid(selectedUserUid)}
                     className="size-12 rounded-full object-cover"
                   />
                 ) : (

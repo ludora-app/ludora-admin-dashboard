@@ -43,7 +43,7 @@ const kyApi = ky.create({
       async ({ request, response }) => {
         const isRefreshRequest =
           request.url.includes("/auth-b2c/refresh-token") ||
-          request.url.includes("/auth-b2b/login-admin");
+          request.url.includes("/auth-b2b/login/admin");
 
         if (response.status === 401 && !isRefreshRequest) {
           const refreshToken = useAuthStore.getState().refreshToken;

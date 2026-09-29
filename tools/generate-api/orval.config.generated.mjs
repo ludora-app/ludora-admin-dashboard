@@ -5,7 +5,7 @@ const PAGINATION_KEYWORDS = ["collection"];
 
 export default async function getOrvalOperations() {
   const rootPath = process.cwd();
-  const swaggerFile = path.resolve(rootPath, "tools/generate-api/swagger.json");
+  const swaggerFile = path.resolve(rootPath, "tools/generate-api/swagger-admin.json");
 
   if (!fs.existsSync(swaggerFile)) {
     console.warn("⚠️ Swagger file not found at:", swaggerFile);
